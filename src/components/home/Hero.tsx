@@ -17,56 +17,144 @@ const Stat = ({ count, description }: StatProps) => (
 );
 
 const Hero = () => {
+  const handleEmailRedirect = () => {
+    const emailInput = document.getElementById('email') as HTMLInputElement;
+    if (emailInput && emailInput.checkValidity()) {
+      window.location.href = `/account/register?email=${encodeURIComponent(emailInput.value.trim())}`;
+    } else if (emailInput) {
+      emailInput.reportValidity();
+    }
+  };
+
   return (
-    <div className="bg-gray-50 py-16">
-      <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <h1 className="text-4xl lg:text-5xl font-bold">
-              Virtual Yoga Retreat At Your Home!
-            </h1>
-            <h3 className="text-xl text-gray-600">Flexible. Impactful. Proven</h3>
+    <div className="yoga-home">
+      <div className="container section-my">
+        <div className="yoga-home-inner">
+          <div className="yoga-home-content">
+            <h1>Virtual Yoga Retreat At Your Home!</h1>
+            <h3>Flexible. Impactful. Proven</h3>
             
-            <div className="relative">
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            <div className="email-register">
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="Enter your email address" 
+                required 
               />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition-colors flex items-center gap-2">
-                Get Free Trial Now
-                <span>→</span>
+              <button 
+                type="button" 
+                className="btn-started sf__btn sf__btn-primary" 
+                onClick={handleEmailRedirect}
+              >
+                Get Free Trial Now 
+                <span>
+                  <img 
+                    src="//theelevateyoga.com/cdn/shop/t/2/assets/next.png?v=138201501430627803641735756455" 
+                    alt="Yoga Icon" 
+                    loading="lazy"
+                  />
+                </span>
               </button>
             </div>
+            
+            <div className="yoga-home-icons">
+              <div className="yoga-home-icons-details">
+                <img 
+                  src="//theelevateyoga.com/cdn/shop/t/2/assets/stars.png?v=65688492886048927591728575162" 
+                  alt="Yoga Icon"
+                />
+                <div className="yoga-home-icons-box">
+                  <h3>100+</h3>
+                  <p>Teachers To Choose From</p>
+                </div>
+              </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              <Stat count="100+" description="Teachers To Choose From" />
-              <Stat count="10000+" description="Customers Served Globally" />
-              <Stat count="100%" description="Authentic Indian Yoga At Your Home" />
+              <div className="yoga-home-icons-details">
+                <img 
+                  src="//theelevateyoga.com/cdn/shop/t/2/assets/stars.png?v=65688492886048927591728575162" 
+                  alt="Yoga Icon"
+                />
+                <div className="yoga-home-icons-box">
+                  <h3>10000+</h3>
+                  <p>Customers Served Globally</p>
+                </div>
+              </div>
+
+              <div className="yoga-home-icons-details">
+                <img 
+                  src="//theelevateyoga.com/cdn/shop/t/2/assets/stars.png?v=65688492886048927591728575162" 
+                  alt="Yoga Icon"
+                />
+                <div className="yoga-home-icons-box">
+                  <h3>100%</h3>
+                  <p>Authentic Indian Yoga At Your Home</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {['Flexibility', 'PCOS/PCOD', 'Strength', 'Weight Loss', 'Stress Relief'].map((category, index) => (
-              <div 
-                key={category}
-                className={`bg-white p-6 rounded-lg shadow-md ${index === 4 ? 'col-span-2' : ''}`}
-              >
+          <div className="yoga-home-cards">
+            <div className="item">
+              <div className="yoga-home-cards-inner card-1">
                 <img 
-                  src={`//theelevateyoga.com/cdn/shop/t/2/assets/${index + 15}.jpg`} 
-                  alt={`Yoga for ${category}`}
-                  className="w-full h-48 object-cover rounded-md mb-4"
+                  src="//theelevateyoga.com/cdn/shop/t/2/assets/16.jpg?v=59073738268833690821730537348" 
+                  alt="Yoga Categories"
                 />
-                <h3 className="font-semibold">Yoga For {category}</h3>
-                <p className="text-sm text-gray-600">
-                  {index === 0 && "Stretch. Strengthen. Flow."}
-                  {index === 1 && "Regulate. Revive. Empower."}
-                  {index === 2 && "Power. Stability. Endurance."}
-                  {index === 3 && "Burn. Sculpt. Transform"}
-                  {index === 4 && "Calm. Balance. Unwind."}
-                </p>
+                <div className="yoga-card-detail">
+                  <h3>Yoga For Flexibility</h3>
+                  <p>Stretch. Strengthen. Flow.</p>
+                </div>
               </div>
-            ))}
+            </div>
+            <div className="item">
+              <div className="yoga-home-cards-inner card-2">
+                <img 
+                  src="//theelevateyoga.com/cdn/shop/t/2/assets/18.jpg?v=21357819047595179131730537381" 
+                  alt="Yoga Categories"
+                />
+                <div className="yoga-card-detail">
+                  <h3>Yoga For PCOS/PCOD</h3>
+                  <p>Regulate. Revive. Empower.</p>
+                </div>
+              </div>
+            </div>
+            <div className="item">
+              <div className="yoga-home-cards-inner card-3">
+                <img 
+                  src="//theelevateyoga.com/cdn/shop/t/2/assets/19.jpg?v=41283869152918568081730537404" 
+                  alt="Yoga Categories"
+                />
+                <div className="yoga-card-detail">
+                  <h3>Yoga For Strength</h3>
+                  <p>Power. Stability. Endurance.</p>
+                </div>
+              </div>
+            </div>
+            <div className="item">
+              <div className="yoga-home-cards-inner card-4">
+                <img 
+                  src="//theelevateyoga.com/cdn/shop/t/2/assets/17.jpg?v=46748586731799426491730537426" 
+                  alt="Yoga Categories"
+                />
+                <div className="yoga-card-detail">
+                  <h3>Yoga For Weight Loss</h3>
+                  <p>Burn. Sculpt. Transform</p>
+                </div>
+              </div>
+            </div>
+            <div className="item">
+              <div className="yoga-home-cards-inner card-5">
+                <img 
+                  src="//theelevateyoga.com/cdn/shop/t/2/assets/15.jpg?v=81354124020126935431730537452" 
+                  alt="Yoga Categories"
+                />
+                <div className="yoga-card-detail">
+                  <h3>Yoga For Stress Relief</h3>
+                  <p>Calm. Balance. Unwind.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

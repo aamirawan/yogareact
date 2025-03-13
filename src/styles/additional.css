@@ -1,0 +1,68 @@
+/* Additional CSS for elements that might need specific styling */
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  .section-my {
+    margin-top: 60px;
+    margin-bottom: 60px;
+  }
+  
+  /* Marquee animation for the yoga bar */
+  .marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    gap: 2rem;
+    padding: 1rem 0;
+  }
+  
+  .marquee li {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: #0a4049;
+  }
+  
+  .yoga-bar {
+    background-color: #f5f8f9;
+    padding: 1rem 0;
+    overflow: hidden;
+  }
+  
+  /* Fix for the yoga cards display */
+  .yoga-home-cards {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 20px;
+    margin-top: 40px;
+  }
+  
+  .yoga-home-cards .item {
+    flex: 0 0 auto;
+    width: 244px;
+  }
+  
+  /* Fix for the features cards display */
+  .yoga-program-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+  }
+  
+  /* Fix for the yoga classes display */
+  .yoga-information-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }

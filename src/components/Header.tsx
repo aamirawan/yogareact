@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Search, User } from 'lucide-react';
 
 interface NavItem {
@@ -15,11 +16,32 @@ const navItems: NavItem[] = [
 ];
 
 const Header = () => {
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+  const [isHomePage, setIsHomePage] = useState(false);
+
+  useEffect(() => {
+    // Check if current page is home page
+    setIsHomePage(location.pathname === '/');
+
+    const handleScroll = () => {
+      if (location.pathname === '/') {
+        setIsSticky(window.scrollY > 0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [location]);
+
+  const logoUrl = isSticky && isHomePage ? 
+    "https://theelevateyoga.com/cdn/shop/files/8.png?v=1729424532" : 
+    "https://theelevateyoga.com/cdn/shop/files/7.png?v=1729424512";
 
   return (
-    <header className="fixed w-full z-50 bg-white">
+    <header className={`fixed w-full z-50 ${isSticky && isHomePage ? 'bg-white' : ''}`}>
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b">
         <button
@@ -29,54 +51,54 @@ const Header = () => {
           <Menu size={24} />
         </button>
         
-        <a href="/" className="flex items-center">
+        <Link to="/" className="flex items-center">
           <img 
-            src="https://theelevateyoga.com/cdn/shop/files/7.png?v=1729424512" 
+            src={logoUrl}
             alt="The Elevate Yoga"
             className="h-8"
           />
-        </a>
+        </Link>
 
-        <button className="text-gray-600 hover:text-gray-900">
+        <Link to="/account/login" className="text-gray-600 hover:text-gray-900">
           <User size={24} />
-        </button>
+        </Link>
       </div>
 
       {/* Desktop Header */}
-      <div className="hidden lg:flex items-center justify-between px-8 py-4">
-        <a href="/" className="flex-shrink-0">
+      <div className="header-alignment hidden lg:flex items-center justify-between px-8 py-4">
+      <Link to="/" className="flex-shrink-0">
           <img 
-            src="https://theelevateyoga.com/cdn/shop/files/8.png?v=1729424532" 
+            src={logoUrl}
             alt="The Elevate Yoga"
             className="h-10"
           />
-        </a>
+        </Link>
 
         <nav className="flex-grow flex justify-center">
           <ul className="flex space-x-8">
             {navItems.map((item) => (
               <li key={item.label}>
-                <a 
-                  href={item.href}
-                  className="text-gray-700 hover:text-gray-900 font-medium"
+                <Link 
+                  to={item.href}
+                  className={`${isSticky && isHomePage ? 'text-gray-700' : 'menuitem-color'} hover:text-gray-900 font-medium`}
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
 
         <div className="flex items-center space-x-6">
-          <a 
-            href="/account/register" 
+        <Link 
+            to="/account/register" 
             className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition-colors"
           >
             Book A Free Trial
-          </a>
-          <a href="/account" className="text-gray-600 hover:text-gray-900">
+          </Link>
+          <Link to="/account/login" className="text-gray-600 hover:text-gray-900">
             <User size={24} />
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -87,7 +109,7 @@ const Header = () => {
           <div className="absolute inset-y-0 left-0 w-64 bg-white shadow-xl">
             <div className="p-4 border-b flex justify-between items-center">
               <img 
-                src="https://theelevateyoga.com/cdn/shop/files/7.png?v=1729424512" 
+                src={logoUrl} 
                 alt="The Elevate Yoga"
                 className="h-8"
               />

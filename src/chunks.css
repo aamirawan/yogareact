@@ -1,0 +1,68 @@
+/* Number Input Controls */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Remove Default Appearance */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Search Input Styles */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+/* Select Element Styling */
+select {
+  background-color: transparent;
+  background-image: var(--arrow-select-box);
+  background-position: calc(100% - 15px) 50%;
+  background-repeat: no-repeat;
+  background-size: 10px;
+  padding-right: 25px;
+}
+
+/* Form Elements Default Styling */
+input:not(
+  .quantity-input__element,
+  .form-control,
+  .scd-item__qty_input,
+  .newsletter__input-st,
+  [type="submit"]
+),
+textarea:not(
+  .quantity-input__element,
+  .form-control,
+  .scd-item__qty_input,
+  .newsletter__input-st,
+  [type="submit"]
+) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-color-3);
+  line-height: 1.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Focus States */
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--border-color-focus);
+  box-shadow: 0 0 0 1px var(--border-color-focus);
+}
