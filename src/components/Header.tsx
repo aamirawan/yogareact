@@ -21,6 +21,15 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const [isHomePage, setIsHomePage] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // Check for user in localStorage
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   useEffect(() => {
     // Check if current page is home page
@@ -96,9 +105,26 @@ const Header = () => {
           >
             Book A Free Trial
           </Link>
-          <Link to="/account/login" className="text-gray-600 hover:text-gray-900">
-            <User size={24} />
-          </Link>
+          {user ? (
+      <div className="flex items-center space-x-4">
+        <span className="text-gray-700">{user.name}</span>
+        <button 
+          onClick={() => {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            setUser(null);
+            window.location.href = '/';
+          }}
+          className="text-gray-600 hover:text-gray-900"
+        >
+          Logout
+        </button>
+      </div>
+    ) : (
+      <Link to="/account/login" className="text-gray-600 hover:text-gray-900">
+        <User size={24} />
+      </Link>
+    )}
         </div>
       </div>
 
@@ -137,12 +163,29 @@ const Header = () => {
                 >
                   Book A Free Trial
                 </a>
-                <a 
-                  href="/account/login" 
-                  className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  Log In
-                </a>
+                {user ? (
+      <>
+        <span className="block text-center text-gray-700">{user.name}</span>
+        <button 
+          onClick={() => {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            setUser(null);
+            window.location.href = '/';
+          }}
+          className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
+        >
+          Logout
+        </button>
+      </>
+    ) : (
+      <a 
+        href="/account/login" 
+        className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
+      >
+        Log In
+      </a>
+    )}
               </div>
             </nav>
           </div>

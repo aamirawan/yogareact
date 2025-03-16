@@ -1,6 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login error:', error);
+    }
+  };
+
   return (
     <main role="main" id="MainContent">
       <div className="text-center pt-10 sf__page-header section__header">
@@ -29,12 +59,12 @@ const LoginPage: React.FC = () => {
             <input type="hidden" name="utf8" value="✓" />
           </form>
           <div data-login-form="" className="flex flex-col-reverse">
-            <form method="post" action="/account/login" id="customer_login" acceptCharset="UTF-8" data-login-with-shop-sign-in="true" data-cptcha="true" data-hcaptcha-bound="true">
+            <form method="post" onSubmit={handleLogin} id="customer_login" acceptCharset="UTF-8" data-login-with-shop-sign-in="true">
               <input type="hidden" name="form_type" value="customer_login" />
               <input type="hidden" name="utf8" value="✓" />
-              <input type="hidden" name="return_to" value="/pages/all-teachers" />
-              <input type="email" name="customer[email]" placeholder="Email" className="form-control" />
-              <input type="password" name="customer[password]" placeholder="Password" className="form-control" />
+              <input type="hidden" name="return_to" value="" />
+              <input type="email" name="customer[email]" placeholder="Email" className="form-control" onChange={(e) => setEmail(e.target.value)} value={email} />
+              <input type="password" name="customer[password]" placeholder="Password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} />
               <a className="underline block my-3 sf-customer__reset-password-btn">Forgot your password?</a>
               <button className="sf__btn sf__btn-primary mt-4  mb-3 w-full" type="submit">
                 Sign In
