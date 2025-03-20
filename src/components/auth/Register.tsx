@@ -112,10 +112,10 @@ const RegistrationForm: React.FC = () => {
         languages: Object.entries(selectedLanguages)
           .filter(([_, value]) => value)
           .map(([key]) => key),
-        sessionType: []
+        sessionType: selectedSessionType
       }
     };
-
+console.log(userData);
     setIsLoading(true);
     setError(null);
 

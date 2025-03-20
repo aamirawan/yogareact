@@ -1,26 +1,11 @@
 export interface TeacherProfile {
     id: string;
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     email: string;
     phone: string;
-    bio: string;
-    specializations: string[];
-    certifications: Certification[];
-    profilePhoto: string;
-    yearsOfExperience: number;
-    rating: number;
-    totalClasses: number;
-    languages: string[];
-  }
-  
-  export interface Certification {
-    id: string;
-    name: string;
-    issuedBy: string;
-    issueDate: string;
-    expiryDate?: string;
-    certificateUrl?: string;
+    certifications: string[];
+    profile_photo: string;
   }
   
   export interface GroupClass {
@@ -28,28 +13,22 @@ export interface TeacherProfile {
     title: string;
     subtitle: string;
     description: string;
-    teacherId: string;
-    maxParticipants: number;
-    currentParticipants: number;
-    price: number;
+    user_id: string;
+    max_participants: number;
     duration: number; // in minutes
     level: 'Beginner' | 'Intermediate' | 'Advanced';
     recurringDays: string[];
-    startTime: string;
-    endTime: string;
-    timezone: string;
-    tags: string[];
-    isActive: boolean;
   }
   
   export interface TeacherAvailability {
-    id: string;
-    teacherId: string;
-    dayOfWeek: number;
-    startTime: string;
-    endTime: string;
-    isRecurring: boolean;
-    exceptions: AvailabilityException[];
+    id?: string;
+    user_id: string;
+    day_of_week: number;
+    start_time: string;
+    end_time: string;
+    is_recurring: boolean;
+    session_duration: number; // Duration in minutes
+    isBooked?: boolean; // Optional field to track if a slot is already booked
   }
   
   export interface AvailabilityException {
@@ -70,13 +49,13 @@ export interface TeacherProfile {
   
   export interface IssueReport {
     id: string;
-    teacherId: string;
+    user_id: string;
     classId?: string;
     sessionId?: string;
     title: string;
     description: string;
     priority: 'Low' | 'Medium' | 'High';
     status: 'Open' | 'InProgress' | 'Resolved';
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
   }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GroupClass } from '../../types/teacher';
 import { Calendar, Clock, Users, Tag } from 'lucide-react';
 
@@ -6,19 +6,42 @@ const ClassManagement = () => {
   const [classes, setClasses] = useState<GroupClass[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newClass, setNewClass] = useState<Partial<GroupClass>>({
+    user_id: '',
     title: '',
     subtitle: '',
     description: '',
-    maxParticipants: 20,
-    price: 0,
+    max_participants: 20,
     duration: 60,
     level: 'Beginner',
     recurringDays: [],
-    tags: [],
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const levels = ['Beginner', 'Intermediate', 'Advanced'];
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+        try {
+          const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId = user?.id;
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/classes/${userId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            }
+          });
+            const data = await response.json();
+            setClasses(data);
+        } catch (error) {
+            console.error('Error fetching classes:', error);
+        }
+    };
+
+    fetchClasses();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -36,9 +59,54 @@ const ClassManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement API call to create class
-    console.log('Creating class:', newClass);
-    setShowCreateModal(false);
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId = user?.id;
+      newClass.user_id = userId;
+      
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/classes`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newClass),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create class');
+      }
+
+      const createdClass = await response.json();
+      
+      // Update the classes list with the new class
+      setClasses(prevClasses => [...prevClasses, createdClass]);
+      
+      // Reset the form
+      setNewClass({
+        'user_id': userId,
+        title: '',
+        subtitle: '',
+        description: '',
+        max_participants: 20,
+        duration: 60,
+        level: 'Beginner',
+        recurringDays: [],
+      });
+      
+      // Close the modal
+      setShowCreateModal(false);
+      
+      // Optional: Show success message
+      alert('Class created successfully!');
+    } catch (error) {
+      console.error('Error creating class:', error);
+      alert('Failed to create class. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -66,7 +134,7 @@ const ClassManagement = () => {
               </div>
               <div className="flex items-center text-gray-600">
                 <Users className="w-4 h-4 mr-2" />
-                {classItem.currentParticipants}/{classItem.maxParticipants} participants
+                {classItem.max_participants} participants
               </div>
               <div className="flex items-center text-gray-600">
                 <Tag className="w-4 h-4 mr-2" />
@@ -183,7 +251,8 @@ const ClassManagement = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-400"
                 >
                   Create Class
                 </button>

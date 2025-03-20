@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IssueReport } from '../../types/teacher';
-import { AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react';
+//import { AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react';
 
 const IssueReporting = () => {
   const [issues, setIssues] = useState<IssueReport[]>([]);
@@ -9,7 +9,7 @@ const IssueReporting = () => {
     title: '',
     description: '',
     priority: 'Medium',
-    status: 'Open'
+    //status: 'Open'
   });
 
   const priorityColors = {
@@ -24,6 +24,33 @@ const IssueReporting = () => {
     Resolved: 'bg-green-100 text-green-800'
   };
 
+  useEffect(() => {
+    const fetchIssues = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const userId = user?.id;
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/report-issue/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch issues');
+        }
+
+        const data = await response.json();
+        setIssues(data);
+      } catch (error) {
+        console.error('Error fetching issues:', error);
+      }
+    };
+
+    fetchIssues();
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewIssue(prev => ({ ...prev,  [name]: value }));
@@ -31,9 +58,37 @@ const IssueReporting = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement API call to create issue
-    console.log('Creating issue:', newIssue);
-    setShowCreateModal(false);
+    try {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId = user?.id;
+      newIssue.user_id = userId;
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/report-issue`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newIssue),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to create issue');
+      }
+  
+      const createdIssue = await response.json();
+      setIssues(prev => [...prev, createdIssue.issue]);
+      setNewIssue({
+        title: '',
+        description: '',
+        priority: 'Medium',
+        status: 'Open'
+      });
+      setShowCreateModal(false);
+    } catch (error) {
+      console.error('Error creating issue:', error);
+      // You might want to add error handling UI here
+    }
   };
 
   return (
@@ -67,7 +122,7 @@ const IssueReporting = () => {
               </div>
             </div>
             <div className="mt-4 text-sm text-gray-500">
-              Reported on: {new Date(issue.createdAt).toLocaleDateString()}
+              Reported on: {new Date(issue.created_at).toLocaleDateString()}
             </div>
           </div>
         ))}

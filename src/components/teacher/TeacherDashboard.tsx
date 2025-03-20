@@ -31,15 +31,16 @@ const TeacherDashboard = () => {
               className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
             >
               <Calendar className="w-5 h-5 mr-3" />
-              Calendar
+              1:1 Session
             </Link>
-            <Link
+            { /* <Link
               to="/teacher/students"
               className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
             >
               <Users className="w-5 h-5 mr-3" />
               Students
             </Link>
+            */ }
             <Link
               to="/teacher/issues"
               className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
