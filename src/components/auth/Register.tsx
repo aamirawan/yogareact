@@ -10,7 +10,8 @@ interface UserPreferences {
 }
 
 interface UserData {
-  name: string | undefined;
+  first_name: string | undefined;
+  last_name: string | undefined;
   email: string | undefined;
   phone_no: string | undefined;
   password: string | undefined;
@@ -22,6 +23,7 @@ interface ApiResponse {
   success: boolean;
   token?: string;
   message?: string;
+  is_verified?: boolean;
 }
 
 const RegistrationForm: React.FC = () => {
@@ -29,6 +31,7 @@ const RegistrationForm: React.FC = () => {
   const [selectedFocus, setSelectedFocus] = useState<string[]>([]);
   const [selectedSessionType, setSelectedSessionType] = useState<string[]>([]);
   const [selectedHealthConcerns, setSelectedHealthConcerns] = useState<string[]>([]);
+  const [selectedRole, setSelectedRole] = useState<string>('student');
   const [selectedLanguages, setSelectedLanguages] = useState<{ english: boolean; hindi: boolean; both: boolean }>({
     english: false,
     hindi: false,
@@ -101,11 +104,12 @@ const RegistrationForm: React.FC = () => {
     }
 
     const userData: UserData = {
-      name: firstName + ' ' + lastName,
+      first_name: firstName,
+      last_name: lastName,
       email,
       phone_no: phone,
       password,
-      role: 'student',
+      role: selectedRole,
       preferences: {
         focus: selectedFocus,
         healthConcerns: selectedHealthConcerns,
@@ -141,14 +145,12 @@ console.log(userData);
         throw new Error(data.message || 'Registration failed');
       }
 
-      // Store auth token if provided
-      if (data.token) {
-        localStorage.setItem('auth_token', data.token);
+      if (data.success) {
+        window.location.href = '/account/login';
+        return;
+      }else{
+        setError('Registration failed');
       }
-
-      // Redirect to teachers page
-      window.location.href = '/account/login';
-
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Registration failed');
       console.error('Registration error:', error);
@@ -165,6 +167,7 @@ console.log(userData);
             <form method="post" action="/account" id="create_customer" acceptCharset="UTF-8" data-login-with-shop-sign-up="true" data-cptcha="true" data-hcaptcha-bound="true" ref={formRef} onSubmit={handleSubmit}>
               <input type="hidden" name="form_type" value="create_customer" />
               <input type="hidden" name="utf8" value="✓" />
+
               <div className="quiz-logo">
                 <a href="/">
                   <img src="//theelevateyoga.com/cdn/shop/t/2/assets/icon-logo.png?v=21660638028715533551731525303" alt="Elevate Icon" />
@@ -408,6 +411,15 @@ console.log(userData);
                         <input type="email" name="customer[email]" placeholder="Email" className="form-control" />
                         <input type="tel" id="phone" name="customer[phone]" placeholder="Enter your phone number" className="form-control" pattern="\\+?\\d{1,3}?[-.\\s]?\\(?\\d{1,4}?\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}" required />
                         <input type="password" name="customer[password]" placeholder="Password" className="form-control" />
+                        <select
+                          name="customer[role]"
+                          value={selectedRole}
+                          onChange={(e) => setSelectedRole(e.target.value)}
+                          className="form-control"
+                        >
+                          <option value="student">Student</option>
+                          <option value="teacher">Teacher</option>
+                        </select>
                         <div className="mt-3 text-color-secondary">Sign up for early Sale access plus tailored new arrivals, trends and promotions. To opt out, click unsubscribe in our emails.</div>
                         <div className="form-login-buttons">
                           <button className="mt-6 mb-3 w-full sf__btn sf__btn-primary">Register</button>

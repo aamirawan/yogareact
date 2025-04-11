@@ -29,6 +29,7 @@ export interface TeacherProfile {
     is_recurring: boolean;
     session_duration: number; // Duration in minutes
     isBooked?: boolean; // Optional field to track if a slot is already booked
+    session_date: string;
   }
   
   export interface AvailabilityException {

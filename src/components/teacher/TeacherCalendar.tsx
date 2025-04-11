@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import { TeacherAvailability } from '../../types/teacher';
-import { Calendar as CalendarIcon, Clock, X } from 'lucide-react';
+import './TeacherCalendar.css'; // Import custom CSS for styling
 
 const TeacherCalendar = () => {
   const [availability, setAvailability] = useState<TeacherAvailability[]>([]);
-  const [showAddSlot, setShowAddSlot] = useState(false);
-  const [selectedDay, setSelectedDay] = useState<number>(1);
-  const [timeSlot, setTimeSlot] = useState({
-    startTime: '09:00',
-    endTime: '10:00',
-    isRecurring: true,
-    sessionDuration: 60 // Duration in minutes
-  });
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [startTime, setStartTime] = useState<string>('09:00');
+  const [endTime, setEndTime] = useState<string>('10:00');
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch existing availability slots when component mounts
   useEffect(() => {
@@ -42,43 +40,55 @@ const TeacherCalendar = () => {
     fetchAvailability();
   }, []);
 
-  const handleAddTimeSlot = async () => {
-    // Check for empty fields
-    if (!timeSlot.startTime || !timeSlot.endTime) {
-      alert('Start time and end time cannot be empty.');
+  const handleDateClick = (date: Date) => {
+    setSelectedDate(date);
+    setError(null); // Clear any previous errors when a new date is selected
+  };
+
+  const handleSaveSlot = async () => {
+    if (!selectedDate) return;
+
+    // Convert input times to minutes since midnight for easier comparison
+    const getMinutesSinceMidnight = (timeString: string) => {
+      const [hours, minutes] = timeString.split(':').map(Number);
+      return hours * 60 + minutes;
+    };
+
+    const newStartMinutes = getMinutesSinceMidnight(startTime);
+    const newEndMinutes = getMinutesSinceMidnight(endTime);
+
+    // Validate end time is after start time
+    if (newEndMinutes <= newStartMinutes) {
+      setError('End time must be after start time.');
       return;
     }
 
-    // Check for time validity
-    const startTime = new Date(`1970/01/01 ${timeSlot.startTime}`);
-    const endTime = new Date(`1970/01/01 ${timeSlot.endTime}`);
-    if (startTime >= endTime) {
-      alert('Start time must be earlier than end time.');
-      return;
-    }
+    // Check for overlapping slots
+    const overlappingSlot = availability.find(slot => {
+      const slotDate = new Date(slot.session_date).toDateString();
+      const selectedDateStr = selectedDate.toDateString();
 
-    // Calculate expected session duration in minutes
-    const expectedDuration = (endTime - startTime) / 60000;
-    if (timeSlot.sessionDuration !== expectedDuration) {
-      alert(`Session duration must be exactly the difference between start and end times (${expectedDuration} minutes).`);
-      return;
-    }
+      if (slotDate !== selectedDateStr) return false;
 
-    const normalizeTime = (time: string) => time.slice(0, 5);
+      const existingStartMinutes = getMinutesSinceMidnight(slot.start_time);
+      const existingEndMinutes = getMinutesSinceMidnight(slot.end_time);
 
-    // Check for duplicate slots
-    const isDuplicate = availability.some(slot => {
-      return (
-        slot.day_of_week === selectedDay &&
-        normalizeTime(slot.start_time) === timeSlot.startTime &&
-        normalizeTime(slot.end_time) === timeSlot.endTime
+      // Check if new slot overlaps with existing slot
+      const hasOverlap = (
+        (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes) || // New slot overlaps with existing slot
+        (newStartMinutes === existingStartMinutes || newEndMinutes === existingEndMinutes) // Exact same start or end time
       );
+
+      return hasOverlap;
     });
-    
-    if (isDuplicate) {
-      alert('A similar time slot already exists for this day.');
+
+    if (overlappingSlot) {
+      setError('Time slot overlaps with an existing slot.');
       return;
     }
+
+    // Calculate session duration in minutes
+    const sessionDuration = newEndMinutes - newStartMinutes;
 
     try {
       const token = localStorage.getItem('token');
@@ -87,11 +97,12 @@ const TeacherCalendar = () => {
 
       const newSlot: TeacherAvailability = {
         user_id: userId,
-        day_of_week: selectedDay,
-        start_time: timeSlot.startTime,
-        end_time: timeSlot.endTime,
-        is_recurring: timeSlot.isRecurring,
-        session_duration: timeSlot.sessionDuration
+        day_of_week: selectedDate.getDay(),
+        start_time: startTime,
+        end_time: endTime,
+        is_recurring: false,
+        session_duration: sessionDuration,
+        session_date: selectedDate.toISOString()
       };
 
       const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/availability`, {
@@ -109,7 +120,8 @@ const TeacherCalendar = () => {
 
       const createdSlot = await response.json();
       setAvailability([...availability, createdSlot.availability]);
-      setShowAddSlot(false);
+      setSelectedDate(null); // Clear selection after saving
+      setError(null); // Clear any previous errors
     } catch (error) {
       console.error('Error creating availability slot:', error);
     }
@@ -137,140 +149,59 @@ const TeacherCalendar = () => {
     }
   };
 
-  const daysOfWeek = [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-  ];
+  const isDateDisabled = ({ date }: { date: Date }) => {
+    return date < new Date();
+  };
+
+  const tileContent = ({ date, view }: { date: Date, view: string }) => {
+    if (view === 'month') {
+      const slots = availability.filter(slot => new Date(slot.session_date).toDateString() === date.toDateString());
+      if (slots.length > 0) {
+        return (
+          <div className="slot-indicator" title={slots.map(slot => `Start: ${slot.start_time}, End: ${slot.end_time}`).join('\n')}></div>
+        );
+      }
+    }
+    return null;
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Availability Calendar</h2>
-        <button
-          onClick={() => setShowAddSlot(true)}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-        >
-          Add Time Slot
-        </button>
-      </div>
-
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-4">
-        {daysOfWeek.map((day, index) => (
-          <div key={day} className="border rounded-lg p-4">
-            <h3 className="font-medium mb-3">{day}</h3>
-            <div className="space-y-2">
-              {availability
-                .filter(slot => slot.day_of_week === index)
-                .map(slot => (
-                  <div
-                    key={slot.id}
-                    className="bg-indigo-50 p-2 rounded flex items-center justify-between"
-                  >
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-2 text-indigo-600" />
-                      <span className="text-sm">
-                        {slot.start_time} - {slot.end_time}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteSlot(slot.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-            </div>
+    <div className="calendar-container">
+      <h2 className="calendar-title">Availability Calendar</h2>
+      <Calendar
+        onClickDay={handleDateClick}
+        value={selectedDate}
+        tileDisabled={isDateDisabled}
+        tileContent={tileContent}
+        tileClassName={({ date, view }) => {
+          if (view === 'month' && selectedDate && date.toDateString() === selectedDate.toDateString()) {
+            return 'react-calendar__tile--active';
+          }
+          return null;
+        }}
+      />
+      {selectedDate && (
+        <div className="time-selection">
+          <label>
+            Start Time:
+            <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+          </label>
+          <label>
+            End Time:
+            <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+          </label>
+          <button onClick={handleSaveSlot}>Save Slot</button>
+          {error && <div className="error-message">{error}</div>}
+        </div>
+      )}
+      <div className="slots-list">
+        {availability.map(slot => (
+          <div key={slot.id} className="slot-item">
+            <span>{`Date: ${new Date(slot.session_date).toLocaleDateString()}, Start: ${slot.start_time}, End: ${slot.end_time}`}</span>
+            <button onClick={() => handleDeleteSlot(slot.id)}>Delete</button>
           </div>
         ))}
       </div>
-
-      {/* Add Time Slot Modal */}
-      {showAddSlot && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-xl font-semibold mb-4">Add Time Slot</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Day of Week</label>
-                <select
-                  value={selectedDay}
-                  onChange={(e) => setSelectedDay(parseInt(e.target.value))}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                >
-                  {daysOfWeek.map((day, index) => (
-                    <option key={day} value={index}>{day}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Start Time</label>
-                  <input
-                    type="time"
-                    value={timeSlot.startTime}
-                    onChange={(e) => setTimeSlot({ ...timeSlot, startTime: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">End Time</label>
-                  <input
-                    type="time"
-                    value={timeSlot.endTime}
-                    onChange={(e) => setTimeSlot({ ...timeSlot, endTime: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="recurring"
-                  checked={timeSlot.isRecurring}
-                  onChange={(e) => setTimeSlot({ ...timeSlot, isRecurring: e.target.checked })}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                />
-                <label htmlFor="recurring" className="ml-2 block text-sm text-gray-700">
-                  Recurring weekly
-                </label>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Session Duration (minutes)</label>
-                <select
-                  value={timeSlot.sessionDuration}
-                  onChange={(e) => setTimeSlot({ ...timeSlot, sessionDuration: parseInt(e.target.value) })}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                >
-                  <option value={30}>30 minutes</option>
-                  <option value={45}>45 minutes</option>
-                  <option value={60}>60 minutes</option>
-                  <option value={90}>90 minutes</option>
-                </select>
-              </div>
-
-              <div className="flex justify-end space-x-4 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowAddSlot(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAddTimeSlot}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                >
-                  Add Slot
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

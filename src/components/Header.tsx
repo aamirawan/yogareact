@@ -15,13 +15,17 @@ const navItems: NavItem[] = [
   { label: 'Contact Us', href: '/contact' }
 ];
 
+interface UserData {
+  name: string;
+  email: string;
+}
+
 const Header = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isSticky, setIsSticky] = useState(false);
-  const [isHomePage, setIsHomePage] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserData | null>(null);
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     // Check for user in localStorage
@@ -31,31 +35,26 @@ const Header = () => {
     }
   }, []);
 
-  useEffect(() => {
-    // Check if current page is home page
-    setIsHomePage(location.pathname === '/');
+  const logoUrl = isHomePage 
+    ? "https://theelevateyoga.com/cdn/shop/files/7.png?v=1729424512"
+    : "https://theelevateyoga.com/cdn/shop/files/8.png?v=1729424512";
 
-    const handleScroll = () => {
-      if (location.pathname === '/') {
-        setIsSticky(window.scrollY > 0);
-      }
-    };
+  const headerClasses = isHomePage 
+    ? "absolute top-0 left-0 w-full z-50"
+    : "w-full z-50 bg-white shadow-sm";
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [location]);
-
-  const logoUrl = isSticky && isHomePage ? 
-    "https://theelevateyoga.com/cdn/shop/files/8.png?v=1729424532" : 
-    "https://theelevateyoga.com/cdn/shop/files/7.png?v=1729424512";
+  const textColor = isHomePage ? "text-white" : "text-gray-600";
+  const hoverColor = isHomePage ? "hover:text-teal-200" : "hover:text-teal-600";
+  const borderColor = isHomePage ? "border-white" : "border-gray-600";
+  const buttonHoverBg = isHomePage ? "hover:bg-white hover:text-teal-900" : "hover:bg-teal-600 hover:text-white";
 
   return (
-    <header className={`fixed w-full z-50 ${isSticky && isHomePage ? 'bg-white' : ''}`}>
+    <header className={headerClasses}>
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b">
+      <div className="lg:hidden flex items-center justify-between px-4 py-3">
         <button
           onClick={() => setIsMobileMenuOpen(true)}
-          className="text-gray-600 hover:text-gray-900"
+          className={`${textColor} ${hoverColor}`}
         >
           <Menu size={24} />
         </button>
@@ -68,14 +67,14 @@ const Header = () => {
           />
         </Link>
 
-        <Link to="/account/login" className="text-gray-600 hover:text-gray-900">
+        <Link to="/account/login" className={`${textColor} ${hoverColor}`}>
           <User size={24} />
         </Link>
       </div>
 
       {/* Desktop Header */}
       <div className="header-alignment hidden lg:flex items-center justify-between px-8 py-4">
-      <Link to="/" className="flex-shrink-0">
+        <Link to="/" className="flex-shrink-0">
           <img 
             src={logoUrl}
             alt="The Elevate Yoga"
@@ -89,7 +88,7 @@ const Header = () => {
               <li key={item.label}>
                 <Link 
                   to={item.href}
-                  className={`${isSticky && isHomePage ? 'text-gray-700' : 'menuitem-color'} hover:text-gray-900 font-medium`}
+                  className={`${textColor} ${hoverColor} transition-colors`}
                 >
                   {item.label}
                 </Link>
@@ -99,32 +98,32 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center space-x-6">
-        <Link 
+          <Link 
             to="/account/register" 
-            className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+            className={`bg-transparent ${textColor} border-2 ${borderColor} px-6 py-2 rounded-full ${buttonHoverBg} transition-colors`}
           >
             Book A Free Trial
           </Link>
           {user ? (
-      <div className="flex items-center space-x-4">
-        <span className="text-gray-700">{user.name}</span>
-        <button 
-          onClick={() => {
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-            setUser(null);
-            window.location.href = '/';
-          }}
-          className="text-gray-600 hover:text-gray-900"
-        >
-          Logout
-        </button>
-      </div>
-    ) : (
-      <Link to="/account/login" className="text-gray-600 hover:text-gray-900">
-        <User size={24} />
-      </Link>
-    )}
+            <div className="flex items-center space-x-4">
+              <span className={textColor}>{user.name}</span>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('user');
+                  localStorage.removeItem('token');
+                  setUser(null);
+                  window.location.href = '/';
+                }}
+                className={`${textColor} ${hoverColor}`}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link to="/account/login" className={`${textColor} ${hoverColor}`}>
+              <User size={24} />
+            </Link>
+          )}
         </div>
       </div>
 
@@ -147,45 +146,49 @@ const Header = () => {
               <ul className="space-y-4">
                 {navItems.map((item) => (
                   <li key={item.label}>
-                    <a 
-                      href={item.href}
+                    <Link 
+                      to={item.href}
                       className="block text-gray-700 hover:text-gray-900 py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
               <div className="mt-8 space-y-4">
-                <a 
-                  href="/account/register" 
+                <Link 
+                  to="/account/register" 
                   className="block w-full text-center bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Book A Free Trial
-                </a>
+                </Link>
                 {user ? (
-      <>
-        <span className="block text-center text-gray-700">{user.name}</span>
-        <button 
-          onClick={() => {
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-            setUser(null);
-            window.location.href = '/';
-          }}
-          className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
-        >
-          Logout
-        </button>
-      </>
-    ) : (
-      <a 
-        href="/account/login" 
-        className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
-      >
-        Log In
-      </a>
-    )}
+                  <>
+                    <span className="block text-center text-gray-700">{user.name}</span>
+                    <button 
+                      onClick={() => {
+                        localStorage.removeItem('user');
+                        localStorage.removeItem('token');
+                        setUser(null);
+                        window.location.href = '/';
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link 
+                    to="/account/login" 
+                    className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Log In
+                  </Link>
+                )}
               </div>
             </nav>
           </div>

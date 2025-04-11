@@ -5,6 +5,7 @@ import Features from './Features';
 import LiveClasses from './LiveClasses';
 import YogaClasses from './YogaClasses';
 import YogaBar from './YogaBar';
+import YogaPackages from './YogaPackages';
 
 const Home = () => {
   // Add any necessary JavaScript functionality here
@@ -57,6 +58,7 @@ const Home = () => {
       <Features />
       <LiveClasses />
       <YogaClasses />
+      <YogaPackages />
       <YogaBar />
     </main>
   );

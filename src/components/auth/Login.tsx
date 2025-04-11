@@ -1,11 +1,24 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const LoginPage: React.FC = () => {
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
+
+  // Check for verification message in URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const verificationMessage = params.get('message');
+    if (verificationMessage) {
+      setMessage(verificationMessage);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,9 +36,30 @@ const LoginPage: React.FC = () => {
       }
 
       const data = await response.json();
+      // Store token and role using AuthContext
+      //console.log("DATA", data);
+      login(data.token, data.user.role);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/dashboard');
+      
+      // Redirect to the page they tried to visit or their dashboard
+      if (from === '/') {
+        switch (data.user.role) {
+          case 'student':
+            navigate('/student/classes');
+            break;
+          case 'teacher':
+            navigate('/teacher/profile');
+            break;
+          case 'admin':
+            navigate('/admin/pages');
+            break;
+          default:
+            navigate('/');
+        }
+      } else {
+        navigate(from);
+      }
     } catch (error) {
       console.error('Login error:', error);
     }
@@ -54,6 +88,11 @@ const LoginPage: React.FC = () => {
       <div className="sf-customer__forms pb-7 md:pb-15 md:w-11/12 lg:w-3/4 xl:w-2/3 2xl:w-1/2 md:flex mx-auto">
         <div className="sf-customer__login mx-4 lg:mx-10 md:w-1/2">
           <h3 className="text-2xl font-medium mb:3 md:mb-6">Log In</h3>
+          {message && (
+            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+              <p>{message}</p>
+            </div>
+          )}
           <form method="post" action="/account/recover" acceptCharset="UTF-8">
             <input type="hidden" name="form_type" value="recover_customer_password" />
             <input type="hidden" name="utf8" value="✓" />

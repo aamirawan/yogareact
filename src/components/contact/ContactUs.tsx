@@ -5,7 +5,7 @@ import contactBanner from './contact-banner.svg';
 
 const ElevateContactPage: React.FC = () => {
   return (
-      <main className="flex-grow">
+      <main className="flex-grow contact-us-page">
         {/* Page Title */}
         <div className="container mx-auto px-4 py-6">
           <h1 className="text-3xl font-bold text-center">Contact</h1>
@@ -17,7 +17,7 @@ const ElevateContactPage: React.FC = () => {
         </div>
 
         {/* Banner Image */}
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4" style={{ padding: "15px" }}>
           <div className="bg-gray-200 rounded-lg overflow-hidden">
             <img
               src={contactBanner}

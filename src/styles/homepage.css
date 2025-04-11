@@ -1,6 +1,6 @@
 /* Homepage CSS Styles */
 .header-alignment{
-  max-width: 1200px;
+  max-width: calc(var(--container-width, 1280)*1px);
   margin: 0 auto;
 }
 .menuitem-color{
@@ -116,6 +116,8 @@
     font-size: 14px;
     justify-content: center;
     height: 50px;
+    background-color: #333;
+    border-radius: 200px;
 }
 
 .yoga-home .yoga-home-inner .btn-started span{

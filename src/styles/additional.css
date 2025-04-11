@@ -2,11 +2,15 @@
 
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: calc(var(--container-width, 1280)*1px);
     margin: 0 auto;
     padding: 0 15px;
   }
   
+  .contact-us-page .container{
+    padding: 1rem;
+  }
+
   .section-my {
     margin-top: 60px;
     margin-bottom: 60px;
@@ -66,3 +70,897 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 16px;
   }
+
+ /* Yoga Packages Styles */
+
+
+ .template-page #MainContent {
+  padding-bottom: 0rem;
+padding-top: 35px
+}
+.sf-header header .sf-menu-logo-bar {
+margin: 0px;  
+}
+.sf-header header .sf-menu-logo-bar .sf-logo {
+  padding: 0;
+  color: #fff;
+}
+
+
+.start-trail-header{
+  font-size: 14px;
+  padding: 8px 24px 9px 24px;
+  line-height: inherit;
+  border-radius: 200px;
+  font-style: normal;
+  font-weight: 500;
+  border: 1px solid #fff !important;
+  color: #000;
+  background-color: #fff;
+  letter-spacing: 0.28px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.27);
+}
+
+.sf__btn-black{
+  font-size: 14px;
+  border: 0;
+  border-radius: 200px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  background: #333;
+  color: #fff;
+  margin-left: 30px;
+  letter-spacing: 0.28px;
+}
+
+.sf__btn-black:hover{
+background: #cd783e;
+color: #fff;
+}
+
+.sf-header .sf-menu-item>a {
+font-size: 14px;
+padding: 7px 20px;
+}
+
+.sf-header .sf-menu-item:hover>a:after {
+  width: 0;
+}
+
+.sf-header .sf-menu-item>a:hover{
+background: rgba(0, 0, 0, .1) !important;
+border-radius: 37px !important;
+}
+
+.account-header{
+background-color: #fff !important;
+box-shadow: rgba(0, 0, 0, 0.04) 0px 10px 20px, rgba(0, 0, 0, 0.04) 0px 2px 6px, rgba(0, 0, 0, 0.04) 0px 0px 1px;
+background: #fff;
+padding: 9px; 
+}
+
+.account-header svg path{
+fill: #0a4049;
+}
+
+.sf__btn-primary:hover{
+background: #333 !important;
+border-color: #333 !important;
+box-shadow: none !important;
+}
+
+.sf-footer form{
+display: none;
+}
+
+.sf-footer .sf__accordion-item .sf__accordion-button {
+font-weight: 500;
+font-size: 14px;
+}
+
+.sf-footer .social-media-links{
+grid-gap: 5px;
+padding: 0px;
+}
+
+.sf__accordion-content .block.mt-4{
+margin: 10px 0 0 0;
+}
+
+.sf-footer .sf-footer__block-inner img{
+width: 180px;
+}
+
+.sf-footer .social-media-links a {
+  background: transparent;
+  height: 40px;
+  width: 40px;
+  border-radius: 10px;
+  color: #fff;
+  border: 1px solid #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-footer .social-media-links a:hover{
+color: #fff;
+}
+
+.sf-footer .social-media-links a svg path{
+fill: #333;
+}
+
+.sf__footer-block-newsletter .sf__footer-block-title {
+line-height: normal !important;
+}
+
+.sf-footer .custom-footer-menu ul li {
+  cursor: pointer;
+  margin: 10px 0px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.sf-footer .custom-footer-menu ul li span{
+font-size: 12px;
+border: 1px solid #000;
+border-radius: 20px;
+padding: 3px 10px;
+margin-left: 5px;
+}
+
+.sf-footer .sf__footer-bottom-inner{
+align-items: end;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-right,
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-left{
+width: 50%;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-left h4{
+font-size: 20px;
+} 
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-left p{
+font-size: 14px;
+margin-top: 10px;
+} 
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-right .sf-footer__left{
+text-align: right;
+}
+
+.yoga-bar {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  background-color: #000;
+  padding: 8px 0;
+  position: relative;
+}
+
+.yoga-bar .yoga-bar-inner {
+  display: inline-block;
+  animation: scroll-left 30s linear infinite; 
+  white-space: nowrap;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.yoga-bar .yoga-bar-inner li {
+  display: inline;
+  margin-right: 20px;
+  position: relative;
+  color: #fff;
+}
+
+.yoga-bar .yoga-bar-inner li::after {
+  content: '•';
+  margin-left: 10px;
+  position: absolute;
+  right: -15px;
+}
+
+.yoga-bar .yoga-bar-inner li:last-child::after {
+  content: '';
+}
+
+.yoga-packages-head{
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+margin-bottom: 30px;
+} 
+
+.yoga-packages-head h1{
+font-size: 36px;
+}
+
+.yoga-packages-head .yoga-packages-head-inner{
+display: flex;
+align-items: center;
+ border-radius: 52px;
+background: #fff;
+box-shadow: 0 0 1px 0 rgba(0, 0, 0, .1), 0 0 2px 0 rgba(0, 0, 0, .1), 0 4px 8px 0 rgba(0, 0, 0, .04);
+gap: 16px;
+height: 64px;
+padding: 16px 12px;
+cursor: pointer;
+}
+
+.yoga-packages-head .yoga-packages-head-inner .yoga-packages-head-phone .circle{
+display: flex;
+justify-content: center;
+align-items: center;
+height: 40px;
+width: 40px;
+border-radius: 50%;
+background: #f2f4f7;
+box-shadow: 0 1px 10px 0 rgba(0, 0, 0, .05);
+}
+
+.yoga-packages-head .yoga-packages-head-inner .yoga-packages-head-phone img{
+height: 18px;
+width: 18px
+}
+
+.yoga-packages-head .yoga-packages-head-inner .yoga-packages-head-detail{
+display: flex;
+align-items: center;
+grid-gap: 16px;
+}
+
+.yoga-packages-head .yoga-packages-head-inner .yoga-packages-head-detail h3{
+font-size: 16px;
+color: #0a4049;
+}
+
+.yoga-packages-head .yoga-packages-head-inner .yoga-packages-head-detail p{
+color: #000;
+font-size: 12px;
+line-height: normal;
+font-weight: 500;
+letter-spacing: .4px;
+opacity: .6;
+margin-top: 5px;
+}
+
+.yoga-packages-head .yoga-packages-head-inner .yoga-packages-head-detail img{
+height: 15px;
+width: 15px;
+}
+
+/* .yoga-packages .yoga-packages-inner{
+display: grid;
+grid-gap: 30px;
+grid-template-columns: repeat(4, 1fr);
+} */
+
+.yoga-packages-card{
+display: flex;
+flex-direction: column;
+padding: 20px 20px 24px;
+border-radius: 15px;
+background: #f5f8ff;
+box-shadow: 0 0 1px 0 rgba(0, 0, 0, .1), 0 0 2px 0 rgba(0, 0, 0, .1), 0 4px 8px 0 rgba(0, 0, 0, .04);
+height: fit-content;
+}
+
+.yoga-packages-card.active{
+background: linear-gradient(45deg, #0a4049, #397982);
+}
+
+.yoga-packages-card span{
+  padding: 6px 16px;
+  border-radius: 100px;
+  color: #000;
+  font-family: var(--man-600);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  width: -moz-fit-content;
+  width: fit-content;
+  background: #fff;
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, .1), 0 0 2px 0 rgba(0, 0, 0, .1), 0 4px 8px 0 rgba(0, 0, 0, .04);
+}
+
+.rrp-price {
+  font-size: 16px;
+  color: #ffb3b3; /* Light red for RRP */
+  text-decoration: line-through;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  color: #fff !important;
+  background: #a9363e !important;
+}
+
+.yoga-packages-card h4{
+font-size: 24px;
+line-height: 32px;
+color: #0a4049;
+margin-top: 16px; 
+}
+
+.yoga-packages-card.active h4{
+color: #fff;
+}
+
+.yoga-packages-card .yoga-packages-card-detail{
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.yoga-packages-card .yoga-packages-card-detail p{
+  position: relative;
+  padding-left: 10px;
+  color: #000;
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 500;
+  letter-spacing: .6px;
+}
+
+.yoga-packages-card.active .yoga-packages-card-detail p{
+color: #fff;
+}
+
+.yoga-packages-card .yoga-packages-card-detail p::before {
+  position: absolute;
+  left: 0;
+  content: "-";
+  color: #000;
+  font-family: var(--man);
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 500;
+  letter-spacing: .6px;
+}
+
+.yoga-packages-card.active .yoga-packages-card-detail p::before {
+  color: #fff;
+}
+
+.yoga-packages-card .btn-div{
+  visibility: hidden;
+  opacity: 0;
+  height: 0;
+  transition: all .3s ease-in-out;
+}
+
+.yoga-packages-card .btn-div .btn-pay{
+  padding: 10px 16px;
+  width: fit-content;
+  background: transparent !important;
+  border: 1px solid #fff !important;
+  font-size: 16px;
+  margin-top: 24px;
+}
+
+.yoga-packages-card.active .btn-div{
+  visibility: visible;
+  opacity: 1;
+  height: 72px; 
+} 
+
+
+.yoga-blogs .section__header{
+margin-bottom: 50px;
+} 
+
+.yoga-blogs .section__header h2{
+font-size: 36px;
+}
+
+.yoga-blogs .sf__blog-card{
+transition: all 0.2s ease-in-out;
+}
+
+.yoga-blogs .sf__blog-card .sf__blog-cardImage{ 
+background-color: #f9f5ef;
+border-radius: 10px;
+box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.27);
+display: block;
+position: relative;
+z-index: 1;
+transition: border-radius 0.2s ease-in-out;
+}
+
+.yoga-blogs .sf__blog-card .sf__blog-cardContent{
+padding: 10px 0px;
+transition: all 0.2s ease-in-out;
+}
+
+.yoga-blogs .sf__blog-card h3{
+display: block;
+font-size: 16px !important;
+letter-spacing: 0;
+line-height: 24px !important;
+margin: 0;
+overflow: hidden;
+text-overflow: ellipsis;
+transition: all 0.2s ease-in-out
+}
+
+.yoga-blogs .sf__blog-cardExcerpt{
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 21px;
+  overflow: hidden;
+  position: relative;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  margin-top: 20px;
+  display: none !important; 
+  transition: all 0.2s ease-in-out
+}
+
+.yoga-reviews{
+padding-bottom: 100px;
+}
+
+.yoga-reviews .yoga-reviews-inner{
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 60px;
+background: linear-gradient(45deg, #0a4049, #397982);
+padding: 40px 50px;
+border-radius: 20px;
+}
+
+.yoga-reviews .yoga-reviews-inner h1{
+font-size: 36px;
+margin-bottom: 30px;
+max-width: 430px;
+color: #fff;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-content-buttons {
+  grid-gap: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-content-buttons .btn-started{
+font-size: 16px;
+padding: .625rem 1.25rem;
+background: #fff !important;
+border: 1px solid #000 !important; 
+color: #000 !important;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-content-buttons .btn-started:hover{
+background: transparent !important;
+color: #fff !important;
+border: 1px solid #fff !important; 
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-content-buttons .btn-learn{
+background: transparent;
+color: #fff;
+border: 1px solid #fff;
+font-size: 16px;
+padding: .625rem 1.25rem;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-content-buttons .btn-learn:hover{
+background: #fff !important;
+color: #000 !important;
+border: 1px solid #fff !important;
+}
+
+.yoga-reviews .yoga-reviews-inner  .yoga-reviews-right{
+position: relative;
+}
+
+.yoga-reviews .yoga-reviews-inner  .yoga-reviews-right .yoga-reviews-right-inner{
+position: absolute;
+top: 0;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card{
+background: #fff;
+border-radius: 15px;
+padding: 20px;
+display: flex;
+grid-gap: 20px;
+margin-bottom: 25px;
+box-shadow: rgba(0, 0, 0, 0.15) 5px 5px 9px 0px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card:last-child{
+margin-bottom: 0px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-image img{
+border-radius: 50%;
+height: 100px;
+width: 100px;
+max-width: 100px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content .yoga-reviews-card-content-inner{
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 10px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content .yoga-reviews-card-content-inner h3{
+font-size: 20px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content .yoga-reviews-card-content-inner .rating {
+display: flex;
+align-items: center;
+grid-gap: 10px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content .yoga-reviews-card-content-inner .rating span{
+  font-weight: 600;
+  font-size: 16px;
+  color: gray;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content .yoga-reviews-card-content-inner .rating img{
+  height: 17px;
+  width: 17px;
+  position: relative;
+  top: -2px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content p{
+font-size: 14px;
+}
+
+
+@keyframes scroll-left {
+  0% {
+      transform: translateX(0);
+  }
+  100% {
+      transform: translateX(-100%);
+  }
+}
+
+.modal {
+position: absolute;
+z-index: 10000;
+top: 0 !important;
+left: 0 !important;
+visibility: hidden;
+width: 100% !important;
+height: 100% !important;
+}
+
+.modal.is-visible {
+visibility: visible;
+}
+
+.modal-overlay {
+position: fixed;
+z-index: 10;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: hsla(0, 0%, 0%, 0.5);
+visibility: hidden;
+opacity: 0;
+transition: visibility 0s linear 0.3s, opacity 0.3s;
+}
+
+.modal.is-visible .modal-overlay {
+opacity: 1;
+visibility: visible;
+transition-delay: 0s;
+}
+
+.product-popup-video .modal-wrapper .modal-header{
+position: absolute;
+right: 0;
+top: -50px;
+left: 0;
+margin: auto;
+text-align: center;
+line-height: 0;
+}
+
+.product-popup-video .modal-wrapper .modal-header .modal-close{
+background: #fff;
+border-radius: 50%;
+height: 40px;
+width: 40px;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: auto;
+line-height: 0;
+}
+
+.product-popup-video .modal-wrapper .modal-header span{
+font-weight: 500;
+font-size: 20px;
+color: #000;
+line-height: 0;
+position: relative;
+top: -1px;
+}
+
+.product-popup-video .modal-wrapper {
+position: fixed;
+z-index: 9999;
+background-color: #fefefe;
+padding: 30px;
+width: 70%;
+margin: auto;
+border-radius: 12px;
+left: 0;
+background-color: #fff;
+box-shadow: 0 0 1.5em #00000059;
+right: 0;
+margin: auto;
+top: 50%;
+transform: translateY(-50%) !important;
+transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.product-popup-video.reels-popup .modal-wrapper {
+padding: 10px;
+width: 23%;
+}
+
+.product-popup-video .modal-body{
+line-height: 0;
+}
+
+/* Media Queries */
+
+@media(min-width: 1023px){
+.sf-header header{
+  padding: 10px 0px;
+}
+
+.sf-header header .sf-logo{
+  flex: 0 0 15%;
+}
+
+.sf-header header .sf-menu-wrapper__desktop{
+  justify-content: left;
+  flex-grow: 1;
+}
+#MainContent section {
+  margin-top: 85px;
+}
+.yoga-blogs .sf__blog-card:hover{
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 10px;
+  transform: scale(1.1); 
+  z-index: 1;
+}
+
+.yoga-blogs .sf__blog-card:hover .sf__blog-cardImage{
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  box-shadow: none !important;
+} 
+
+.yoga-blogs .sf__blog-card:hover .sf__blog-cardContent{
+  background-color: #faf9f7;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.37);
+  padding: 10px 5%;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.yoga-blogs .sf__blog-card:hover .sf__blog-card h3{
+  transform: scale(0.91);
+} 
+
+.yoga-blogs .sf__blog-card:hover .sf__blog-cardExcerpt{
+  display: block !important;
+}
+}
+
+@media(max-width: 1023px){
+.sf-logo {
+  justify-content: end;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.sf-header header.sf-header__mobile .sf-logo a {
+  width: 150px;
+  text-align: right;
+}
+
+.sf-header header {
+  background-color: transparent !important;
+  color: #fff !important;
+}
+
+.sf-header.scroll-up header {
+  color: #000 !important;
+}
+
+.sf-header header .sf-menu-button svg{
+  fill: #000;
+}
+}
+
+@media(min-width: 769px) and (max-width: 1023px){
+
+.sf-footer .sf__footer-bottom-inner {
+    width: 100%;
+    padding: initial;
+    display: grid;
+    grid-gap: 0px;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: self-end;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-right, .sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-left {
+    width: 100%;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-right .sf-footer__left {
+    text-align: right;
+    width: 100%;
+    margin: 0;
+}
+
+.product-popup-video.reels-popup .modal-wrapper {
+  padding: 10px;
+  width: 35%;
+}
+}
+
+@media(max-width: 768px){
+.sf-footer .sf__footer-bottom-inner {
+    align-items: center;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-right, .sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-left {
+    width: 100%;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-right .sf-footer__left {
+    text-align: center;
+    margin: 10px 0 0 0;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-right .sf-footer__left span{
+  font-size: 14px;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-left h4 {
+    font-size: 16px;
+    text-align: center;
+}
+
+.sf-footer .sf__footer-bottom-inner .sf__footer-bottom-inner-left p {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+.yoga-packages .yoga-packages-head h1 {
+    font-size: 28px;
+}
+
+.yoga-packages .yoga-packages-head {
+    margin-bottom: 35px;
+}
+
+.yoga-packages .yoga-packages-head .yoga-packages-head-inner {
+    display: none;
+}
+
+.yoga-packages .yoga-packages-inner .yoga-packages-card {
+    background: linear-gradient(45deg, #0a4049, #397982);
+}
+
+.yoga-packages .yoga-packages-inner .yoga-packages-card .yoga-packages-card-detail {
+  margin-top: 5px;
+}
+
+.yoga-packages .yoga-packages-inner .yoga-packages-card h4{
+  font-size: 20px;
+  color: #fff;
+}
+
+.yoga-packages .yoga-packages-inner .yoga-packages-card .yoga-packages-card-detail p{
+  color: #fff;
+  font-size: 14px;
+}
+
+.yoga-packages .yoga-packages-inner .yoga-packages-card .yoga-packages-card-detail p::before{
+  color: #fff;
+}
+
+.yoga-packages .yoga-packages-inner .yoga-packages-card .btn-div {
+  visibility: visible;
+  opacity: 1;
+  height: 72px;
+}
+
+.yoga-packages .yoga-packages-inner .yoga-packages-card .btn-div .btn-pay {
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.yoga-blogs .section__header {
+    margin-bottom: 35px;
+}
+
+.yoga-blogs .section__header h2 {
+    font-size: 28px !important;
+}
+
+.yoga-blogs .sf__blog-card h3 {
+    font-size: 14px !important;
+    line-height: 20px !important;
+}
+
+.yoga-reviews {
+  padding-bottom: 280px;
+}
+
+.yoga-reviews .yoga-reviews-inner {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 30px;
+    padding: 20px 25px;
+}
+
+.yoga-reviews .yoga-reviews-inner h1 {
+    font-size: 28px;
+    max-width: 100%;
+    margin-bottom: 25px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-content-buttons .btn-learn,
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-content-buttons .btn-started {
+    font-size: 14px;
+    padding: .525rem 1.25rem;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content .yoga-reviews-card-content-inner h3 {
+    font-size: 16px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content .yoga-reviews-card-content-inner .rating span {
+  font-size: 14px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card {
+  padding: 15px;
+  margin-bottom: 15px;
+  grid-gap: 10px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-content .yoga-reviews-card-content-inner .rating img {
+  height: 15px;
+  width: 15px;
+}
+
+.yoga-reviews .yoga-reviews-inner .yoga-reviews-card .yoga-reviews-card-image img {
+  height: 60px;
+  width: 60px;
+  max-width: 60px;
+}
+
+.sf-footer__accordion .sf__accordion-item:first-child .sf__accordion-button:after{
+  background: none;
+}
+
+.product-popup-video.reels-popup .modal-wrapper {
+  padding: 10px;
+  width: 320px;
+}
+}
