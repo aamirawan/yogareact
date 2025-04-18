@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users/login`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
