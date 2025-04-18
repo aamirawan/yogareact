@@ -125,7 +125,7 @@ console.log(userData);
 
     try {
       // Check if API URL is configured
-      const apiUrl = import.meta.env.VITE_BACKEND_API_URL;
+      const apiUrl = import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')
       console.log(apiUrl)
       if (!apiUrl) {
         throw new Error('API URL is not configured');

@@ -35,7 +35,7 @@ const Classes: React.FC = () => {
 
   const fetchClasses = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/classes`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/classes`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -52,7 +52,7 @@ const Classes: React.FC = () => {
 
   const fetchTeachers = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/teachers`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/teachers`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -71,7 +71,7 @@ const Classes: React.FC = () => {
 
   const handleCreate = async (classData: Omit<Class, 'id' | 'created_at' | 'updated_at' | 'first_name' | 'last_name'>) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/classes`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/classes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,8 +89,10 @@ const Classes: React.FC = () => {
 
   const handleUpdate = async (id: number, classData: Partial<Omit<Class, 'id' | 'created_at' | 'updated_at' | 'first_name' | 'last_name'>>) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/classes/${id}`, {
-        method: 'PUT',
+      const baseUrl = import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '');
+      const url = currentClass ? `${baseUrl}/api/admin/classes/${currentClass.id}` : `${baseUrl}/api/admin/classes`;
+      const response = await fetch(url, {
+        method: currentClass ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -108,7 +110,7 @@ const Classes: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this class?')) return;
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/classes/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/classes/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -30,7 +30,7 @@ const IssueReporting = () => {
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const userId = user?.id;
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/report-issue/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/report-issue/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const IssueReporting = () => {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const userId = user?.id;
       newIssue.user_id = userId;
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/report-issue`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/report-issue`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -38,7 +38,7 @@ const BrowseClasses = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/students/get/classes`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/get/classes`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -69,7 +69,7 @@ const BrowseClasses = () => {
 
     try {
       // First check if user has an active subscription
-      const subscriptionResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/students/subscription/status`, {
+      const subscriptionResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/subscription/status`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
@@ -93,7 +93,7 @@ const BrowseClasses = () => {
       }
 
       // Book the class
-      const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/bookings/group`, {
+      const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/bookings/group`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

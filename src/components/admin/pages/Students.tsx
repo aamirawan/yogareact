@@ -28,7 +28,7 @@ const Students: React.FC = () => {
   const fetchStudents = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/students`,{
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/students`,{
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const Students: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/students/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/students/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -84,8 +84,8 @@ const Students: React.FC = () => {
     try {
       const values = await form.validateFields();
       const url = editingStudent 
-        ? `${import.meta.env.VITE_BACKEND_API_URL}/admin/students/${editingStudent.id}`
-        : `${import.meta.env.VITE_BACKEND_API_URL}/admin/students`;
+        ? `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/students/${editingStudent.id}`
+        : `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/students`;
       
       const response = await fetch(url, {
         method: editingStudent ? 'PUT' : 'POST',

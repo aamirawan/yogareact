@@ -23,7 +23,7 @@ const Packages = () => {
 
   const fetchPackages = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/packages`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/packages`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -56,7 +56,8 @@ const Packages = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/package`, {
+      const baseUrl = import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '');
+      const response = await fetch(`${baseUrl}/api/admin/package`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -87,7 +88,9 @@ const Packages = () => {
 
   const handleDeactivate = async (id: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/package/deactivate/${id}`, {
+      const baseUrl = import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '');
+      const url = currentPackage._id ? `${baseUrl}/api/admin/package/${currentPackage._id}` : `${baseUrl}/api/admin/package`;
+      const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

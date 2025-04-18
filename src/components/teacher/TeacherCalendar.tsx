@@ -19,7 +19,7 @@ const TeacherCalendar = () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const teacherId = user?.id;
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/availability/${teacherId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/availability/${teacherId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ const TeacherCalendar = () => {
         session_date: selectedDate.toISOString()
       };
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/availability`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/availability`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -131,7 +131,7 @@ const TeacherCalendar = () => {
     try {
       const token = localStorage.getItem('token');
       
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/availability/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/availability/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

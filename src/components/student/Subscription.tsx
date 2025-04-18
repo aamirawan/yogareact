@@ -30,7 +30,7 @@ const Subscription = () => {
 
   const fetchSubscriptionPlans = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/students/packages`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/packages`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -51,7 +51,7 @@ const Subscription = () => {
 
   const fetchCurrentSubscription = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/students/my-orders`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/my-orders`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -72,7 +72,7 @@ const Subscription = () => {
   const handleSubscribe = async (planId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/students/create/order`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/create/order`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -96,7 +96,7 @@ const Subscription = () => {
         description: "Subscription Payment",
         order_id: orderId,
         handler: async function (response: RazorpayPaymentResponse) {
-          const verifyRes = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/students/payment/verify`, {
+          const verifyRes = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/payment/verify`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -131,7 +131,7 @@ const Subscription = () => {
 
   const handleApplyCoupon = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/coupons/validate`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/coupons/validate`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

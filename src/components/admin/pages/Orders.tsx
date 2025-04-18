@@ -34,7 +34,7 @@ const Orders: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/orders`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/orders`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -49,7 +49,7 @@ const Orders: React.FC = () => {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/bookings`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/bookings`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -73,7 +73,7 @@ const Orders: React.FC = () => {
   const handleCancelOrder = async (id: number) => {
     if (!window.confirm('Are you sure you want to cancel this order?')) return;
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/orders/cancel/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/orders/cancel/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -89,7 +89,7 @@ const Orders: React.FC = () => {
   const handleRefundOrder = async (id: number) => {
     if (!window.confirm('Are you sure you want to refund this order?')) return;
     try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/orders/refund/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/orders/refund/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

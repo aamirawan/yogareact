@@ -26,7 +26,7 @@ const ClassManagement = () => {
           const token = localStorage.getItem('token');
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const userId = user?.id;
-          const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/classes/${userId}`, {
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/classes/${userId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -66,7 +66,7 @@ const ClassManagement = () => {
       const userId = user?.id;
       newClass.user_id = userId;
       
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/classes`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/classes`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

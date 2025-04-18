@@ -23,7 +23,7 @@ const StaticPages = () => {
   const fetchPages = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/pages`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/pages`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -51,8 +51,8 @@ const StaticPages = () => {
     e.preventDefault();
     try {
       const url = currentPage._id 
-        ? `${import.meta.env.VITE_BACKEND_API_URL}/admin/page/${currentPage._id}`
-        : `${import.meta.env.VITE_BACKEND_API_URL}/admin/page`;
+        ? `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/page/${currentPage._id}`
+        : `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/page`;
       
       const method = currentPage._id ? 'PUT' : 'POST';
       
@@ -89,7 +89,7 @@ const StaticPages = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this page?')) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/page/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/page/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,

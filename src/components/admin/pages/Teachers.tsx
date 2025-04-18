@@ -28,7 +28,7 @@ const Teachers = () => {
   const fetchTeachers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/teachers`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/teachers`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -50,7 +50,7 @@ const Teachers = () => {
 
   const handleUpdateTeacher = async (teacherId: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/teacher/${teacherId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/teacher/${teacherId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -70,7 +70,7 @@ const Teachers = () => {
     if (!window.confirm('Are you sure you want to delete this teacher?')) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/teacher/${teacherId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/teacher/${teacherId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -85,7 +85,7 @@ const Teachers = () => {
 
   const handleApproveTeacher = async (teacherId: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/teacher/approve/${teacherId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/teacher/approve/${teacherId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -100,7 +100,7 @@ const Teachers = () => {
 
   const handleRejectTeacher = async (teacherId: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/teacher/reject/${teacherId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/teacher/reject/${teacherId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

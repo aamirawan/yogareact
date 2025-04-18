@@ -13,7 +13,13 @@ const TeacherReviews = () => {
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement API call to submit review
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/student/review`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newReview),
+    });
     console.log('Submitting review:', newReview);
     setShowReviewModal(false);
   };
@@ -45,7 +51,7 @@ const TeacherReviews = () => {
 
       {/* Reviews List */}
       <div className="space-y-4">
-        {reviews.map(review => (
+        {reviews.map((review) => (
           <div key={review.id} className="bg-white rounded-lg shadow p-6">
             <div className="flex justify-between items-start">
               <div>

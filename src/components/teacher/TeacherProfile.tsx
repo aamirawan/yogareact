@@ -25,7 +25,7 @@ const TeacherProfileComponent = () => {
       const userId = user?.id;
       console.log(userId);
       console.log(user);
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/profile/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/profile/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const TeacherProfileComponent = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/profile`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/profile`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -114,7 +114,7 @@ const TeacherProfileComponent = () => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const userId = user?.id;
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/teachers/profile/${userId}/photo`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/profile/${userId}/photo`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

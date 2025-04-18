@@ -25,7 +25,7 @@ const BlogPosts = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/posts`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/posts`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -57,7 +57,8 @@ const BlogPosts = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const url = currentPost._id ? `${import.meta.env.VITE_BACKEND_API_URL}/admin/post/${currentPost._id}` : `${import.meta.env.VITE_BACKEND_API_URL}/admin/post`;
+      const baseUrl = import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '');
+      const url = currentPost._id ? `${baseUrl}/api/admin/post/${currentPost._id}` : `${baseUrl}/api/admin/post`;
       const method = currentPost._id ? 'PUT' : 'POST';
       
       const response = await fetch(url, {
@@ -96,7 +97,7 @@ const BlogPosts = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/post/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/admin/post/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
