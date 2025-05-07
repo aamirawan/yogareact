@@ -12,6 +12,10 @@ interface ClassItem {
   spotsLeft: number;
   rating: number;
   reviews: number;
+  isBooked?: boolean;
+  bookingId?: string;
+  class_date?: string;
+  start_time?: string;
 }
 
 const BrowseClasses = () => {
@@ -34,6 +38,12 @@ const BrowseClasses = () => {
   const [error, setError] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
+  
+  // Cancellation state
+  const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+  const [cancelSuccess, setCancelSuccess] = useState(false);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -52,7 +62,38 @@ const BrowseClasses = () => {
         }
 
         const data = await response.json();
-        setClasses(data.data);
+        console.log('Classes data from API:', data.data); // Log the data to see its structure
+        
+        // Debug: Check for duplicate IDs in the data
+        const idMap: Record<string, number> = {};
+        data.data.forEach((item: any, index: number) => {
+          const id = item.id?.toString() || '';
+          if (idMap[id]) {
+            console.warn(`Duplicate ID found: ${id} at indexes ${idMap[id]} and ${index}`);
+          } else {
+            idMap[id] = index;
+          }
+        });
+        
+        // Ensure all required fields are present and properly formatted
+        const formattedClasses = data.data.map((classItem: any) => ({
+          ...classItem,
+          // Use class_id as the primary identifier
+          id: classItem.class_id?.toString() || classItem.id?.toString() || '', 
+          // Make sure we use the right teacher ID
+          teacherId: classItem.teacher_id?.toString() || classItem.user_id?.toString() || '',
+          // Calculate spots left
+          spotsLeft: classItem.max_participants - (classItem.bookedSpots || 0),
+          // Booking status
+          isBooked: classItem.isBooked || false,
+          bookingId: classItem.bookingId || undefined,
+          // Ensure dates are properly formatted
+          class_date: classItem.class_date || classItem.date || new Date().toISOString().split('T')[0],
+          // Make sure profile photo is available
+          profile_photo: classItem.profile_photo || 'https://via.placeholder.com/150'
+        }));
+        
+        setClasses(formattedClasses);
       } catch (error) {
         console.error('Error fetching classes:', error);
         setClasses([]);
@@ -62,68 +103,128 @@ const BrowseClasses = () => {
     fetchClasses();
   }, [filters]);
 
+  // Handle booking a class
   const handleBookClass = async (classItem: ClassItem) => {
     setIsLoading(true);
     setError(null);
     setSelectedClass(classItem);
-
+    
     try {
-      // First check if user has an active subscription
-      const subscriptionResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/subscription/status`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-      });
-
-      if (!subscriptionResponse.ok) {
-        throw new Error('Failed to check subscription status');
-      }
-
-      const subscriptionData = await subscriptionResponse.json();
-      
-      if (!subscriptionData.isActive) {
-        setError('You need an active subscription to book classes');
-        return;
-      }
-
-      // Check if there are spots available
-      if (classItem.spotsLeft <= 0) {
-        setError('No spots available for this class');
-        return;
-      }
-
-      // Book the class
-      const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/bookings/group`, {
+      // Book the class using the bookGroupClass API
+      const bookingResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/bookings/group`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          // Use the id field which now contains the class_id
           class_id: classItem.id,
-          student_id: studentId,
+          instance_date: classItem.class_date // Pass the class date for recurring classes
         }),
       });
 
+      const responseData = await bookingResponse.json();
+
       if (!bookingResponse.ok) {
-        throw new Error('Failed to book class');
+        throw new Error(responseData.message || 'Failed to book class');
       }
 
-      setShowConfirmation(true);
-      
-      // Refresh the classes list to update spots left
+      // Update the class with booking information
       const updatedClasses = classes.map(c => {
         if (c.id === classItem.id) {
-          return { ...c, spotsLeft: c.spotsLeft - 1 };
+          return { 
+            ...c, 
+            isBooked: true,
+            bookingId: responseData.bookingId,
+            spotsLeft: c.spotsLeft - 1 
+          };
         }
         return c;
       });
+      
       setClasses(updatedClasses);
-    } catch (error) {
+      setSelectedClass({
+        ...classItem,
+        isBooked: true,
+        bookingId: responseData.bookingId
+      });
+      setShowConfirmation(true);
+    } catch (error: any) {
       console.error('Error booking class:', error);
-      setError('Failed to book class. Please try again later.');
+      setError(error.message || 'Failed to book class. Please try again later.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Handle canceling a class
+  const handleCancelClass = (classItem: ClassItem) => {
+    if (!classItem.bookingId) {
+      setError('No booking found to cancel');
+      return;
+    }
+    
+    setError(null);
+    setSelectedClass(classItem);
+    setShowCancelConfirmation(true);
+    setCancelError(null);
+    setCancelSuccess(false);
+  };
+  
+  // Confirm canceling a class
+  const confirmCancelClass = async () => {
+    if (!selectedClass || !selectedClass.bookingId) return;
+    
+    setCancelLoading(true);
+    setCancelError(null);
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/bookings/${selectedClass.bookingId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+      
+      const responseData = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Failed to cancel booking');
+      }
+      
+      setCancelSuccess(true);
+      
+      // Update the classes list to show the class as not booked
+      const updatedClasses = classes.map(c => {
+        if (c.id === selectedClass.id) {
+          return {
+            ...c,
+            isBooked: false,
+            bookingId: undefined, // Use undefined instead of null to match the type
+            spotsLeft: c.spotsLeft + 1
+          };
+        }
+        return c;
+      });
+      
+      setClasses(updatedClasses);
+      
+      // Close the confirmation modal after a delay
+      setTimeout(() => {
+        setShowCancelConfirmation(false);
+        setSelectedClass(null);
+      }, 2000);
+      
+    } catch (error: any) {
+      console.error('Error canceling booking:', error);
+      setCancelError(error.message || 'Failed to cancel booking. Please try again later.');
+    } finally {
+      setCancelLoading(false);
     }
   };
 
@@ -134,7 +235,7 @@ const BrowseClasses = () => {
     'PCOS/PCOD',
     'Weight Loss',
     'Stress Relief'
-  ];
+  ].map((area, index) => ({ id: `focus-${index}`, name: area }));
 
   const levels = ['Beginner', 'Intermediate', 'Advanced'];
 
@@ -173,7 +274,7 @@ const BrowseClasses = () => {
         >
           <option value="">Focus Area</option>
           {focusAreas.map(area => (
-            <option key={area} value={area}>{area}</option>
+            <option key={area.id} value={area.name}>{area.name}</option>
           ))}
         </select>
 
@@ -184,8 +285,8 @@ const BrowseClasses = () => {
           className="border rounded-lg px-3 py-2"
         >
           <option value="">Level</option>
-          {levels.map(level => (
-            <option key={level} value={level}>{level}</option>
+          {levels.map((level, index) => (
+            <option key={`level-${index}`} value={level}>{level}</option>
           ))}
         </select>
 
@@ -215,8 +316,8 @@ const BrowseClasses = () => {
 
       {/* Class Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {classes.map((classItem) => (
-          <div key={classItem.id} className="bg-white rounded-lg shadow overflow-hidden">
+        {classes.map((classItem, index) => (
+          <div key={`class-${classItem.id}-${index}`} className="bg-white rounded-lg shadow overflow-hidden">
             <div className="flex items-center p-4">
               <img
                 src={classItem.profile_photo}
@@ -248,17 +349,27 @@ const BrowseClasses = () => {
                   <span>{classItem.rating} ({classItem.reviews} reviews)</span>
                 </div>
               </div>
-              <button 
-                onClick={() => handleBookClass(classItem)}
-                disabled={isLoading || classItem.spotsLeft <= 0}
-                className={`w-full mt-4 py-2 rounded-lg ${
-                  classItem.spotsLeft <= 0
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-indigo-600 hover:bg-indigo-700'
-                } text-white`}
-              >
-                {classItem.spotsLeft <= 0 ? 'Class Full' : 'Book Now'}
-              </button>
+              {classItem.isBooked ? (
+                <button
+                  onClick={() => handleCancelClass(classItem)}
+                  disabled={isLoading}
+                  className="w-full mt-4 py-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                >
+                  Cancel Booking
+                </button>
+              ) : (
+                <button 
+                  onClick={() => handleBookClass(classItem)}
+                  disabled={isLoading || classItem.spotsLeft <= 0}
+                  className={`w-full mt-4 py-2 rounded-lg ${
+                    classItem.spotsLeft <= 0
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-indigo-600 hover:bg-indigo-700'
+                  } text-white`}
+                >
+                  {classItem.spotsLeft <= 0 ? 'Class Full' : 'Book Now'}
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -266,7 +377,7 @@ const BrowseClasses = () => {
 
       {/* Booking Confirmation Modal */}
       {showConfirmation && selectedClass && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <h3 className="text-xl font-semibold mb-4">Booking Confirmed!</h3>
             <p className="text-gray-600">
@@ -280,6 +391,57 @@ const BrowseClasses = () => {
                 Close
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Cancel Confirmation Modal */}
+      {showCancelConfirmation && selectedClass && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            {cancelSuccess ? (
+              <>
+                <h3 className="text-xl font-semibold mb-4">Booking Cancelled</h3>
+                <p className="text-gray-600 mb-6">
+                  Your booking for <span className="font-semibold">{selectedClass.title}</span> has been successfully cancelled.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-semibold mb-4">Cancel Booking</h3>
+                <p className="text-gray-600 mb-6">
+                  Are you sure you want to cancel your booking for <span className="font-semibold">{selectedClass.title}</span>?
+                </p>
+                {cancelError && (
+                  <div className="bg-red-50 p-3 rounded-md mb-4">
+                    <p className="text-red-700 text-sm">{cancelError}</p>
+                  </div>
+                )}
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setShowCancelConfirmation(false)}
+                    className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                    disabled={cancelLoading}
+                  >
+                    Keep Booking
+                  </button>
+                  <button
+                    onClick={confirmCancelClass}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                    disabled={cancelLoading}
+                  >
+                    {cancelLoading ? (
+                      <span className="flex items-center justify-center">
+                        <span className="animate-spin h-4 w-4 border-t-2 border-b-2 border-white rounded-full mr-2"></span>
+                        Cancelling...
+                      </span>
+                    ) : (
+                      'Yes, Cancel'
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

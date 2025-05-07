@@ -73,7 +73,7 @@ const OneOnOneBooking = () => {
   const fetchTeachers = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/student/teachers`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/profile`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         }
@@ -95,7 +95,7 @@ const OneOnOneBooking = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/student/get/one/on/one/sessions?teacher_id=${teacherId}`,
+        `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/get/one/on/one/sessions?teacher_id=${teacherId}`,
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,

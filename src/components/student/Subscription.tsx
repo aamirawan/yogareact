@@ -10,6 +10,7 @@ const Subscription = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<SubscriptionPlan | null>(null);
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -71,6 +72,7 @@ const Subscription = () => {
 
   const handleSubscribe = async (planId: string) => {
     try {
+      console.log('user', user);
       const token = localStorage.getItem('token');
       const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/create/order`, {
         method: 'POST',
@@ -92,7 +94,7 @@ const Subscription = () => {
         key,
         amount,
         currency,
-        name: "Your Yoga Platform",
+        name: "ElevateYoga",
         description: "Subscription Payment",
         order_id: orderId,
         handler: async function (response: RazorpayPaymentResponse) {
@@ -113,8 +115,11 @@ const Subscription = () => {
           }
         },
         prefill: {
-          name: "Your Name",
-          email: "user@example.com",
+          name: user?.first_name && user?.last_name 
+            ? `${user.first_name} ${user.last_name}` 
+            : "Your Name",
+          email: user?.email || "user@example.com",
+          contact: user?.phone_no || "",
         },
         theme: {
           color: "#0077B6",

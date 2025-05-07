@@ -102,6 +102,7 @@ export interface Student {
     prefill: {
       name: string;
       email: string;
+      contact?: string;
     };
     theme: {
       color: string;
