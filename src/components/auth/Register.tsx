@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/quiz.css';
 
 // TypeScript interfaces
@@ -26,7 +27,8 @@ interface ApiResponse {
   is_verified?: boolean;
 }
 
-const RegistrationForm: React.FC = () => {
+const RegistrationForm = () => {
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState<string>('step1');
   const [selectedFocus, setSelectedFocus] = useState<string[]>([]);
   const [selectedSessionType, setSelectedSessionType] = useState<string[]>([]);
@@ -146,7 +148,7 @@ console.log(userData);
       }
 
       if (data.success) {
-        window.location.href = '/account/login';
+        navigate('/account/login');
         return;
       }else{
         setError('Registration failed');

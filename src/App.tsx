@@ -1,35 +1,47 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Home from './components/home/Home';
-import Register from './components/auth/Register';
-import Login from './components/auth/Login';
-import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
-//import LiveClasses from './components/LiveClasses';
-//import About from './components/About';
-//import FAQs from './components/FAQs';
-import Contact from './components/contact/ContactUs';
-import NotFound from './components/NotFound';
-import TeacherDashboard from './components/teacher/TeacherDashboard';
-import TeacherProfile from './components/teacher/TeacherProfile';
-import ClassManagement from './components/teacher/ClassManagement';
-import TeacherCalendar from './components/teacher/TeacherCalendar';
-import IssueReporting from './components/teacher/IssueReporting';
-import StudentDashboard from './components/student/StudentDashboard';
-import BrowseClasses from './components/student/BrowseClasses';
-import Subscription from './components/student/Subscription';
-import TeacherReviews from './components/student/TeacherReviews';
-import OneOnOneBooking from './components/student/OneOnOneBooking';
-import AdminDashboard from './components/admin/AdminDashboard';
-import StaticPages from './components/admin/pages/StaticPages';
-import BlogPosts from './components/admin/pages/BlogPosts';
-import Packages from './components/admin/pages/Packages';
-import Teachers from './components/admin/pages/Teachers';
-import Students from './components/admin/pages/Students';
-import Classes from './components/admin/pages/Classes';
-import Orders from './components/admin/pages/Orders';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
+// Loading component for Suspense fallback
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="w-12 h-12 border-4 border-teal-500 rounded-full border-t-transparent animate-spin"></div>
+  </div>
+);
+
+// Lazy load components for better performance
+const Home = lazy(() => import('./components/home/Home'));
+const Register = lazy(() => import('./components/auth/Register'));
+const Login = lazy(() => import('./components/auth/Login'));
+const Contact = lazy(() => import('./components/contact/ContactUs'));
+const NotFound = lazy(() => import('./components/NotFound'));
+
+// Teacher components
+const TeacherDashboard = lazy(() => import('./components/teacher/TeacherDashboard'));
+const TeacherProfile = lazy(() => import('./components/teacher/TeacherProfile'));
+const ClassManagement = lazy(() => import('./components/teacher/ClassManagement'));
+const TeacherCalendar = lazy(() => import('./components/teacher/TeacherCalendar'));
+const IssueReporting = lazy(() => import('./components/teacher/IssueReporting'));
+
+// Student components
+const StudentDashboard = lazy(() => import('./components/student/StudentDashboard'));
+const BrowseClasses = lazy(() => import('./components/student/BrowseClasses'));
+const Subscription = lazy(() => import('./components/student/Subscription'));
+const TeacherReviews = lazy(() => import('./components/student/TeacherReviews'));
+const OneOnOneBooking = lazy(() => import('./components/student/OneOnOneBooking'));
+
+// Admin components
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
+const StaticPages = lazy(() => import('./components/admin/pages/StaticPages'));
+const BlogPosts = lazy(() => import('./components/admin/pages/BlogPosts'));
+const Packages = lazy(() => import('./components/admin/pages/Packages'));
+const Teachers = lazy(() => import('./components/admin/pages/Teachers'));
+const Students = lazy(() => import('./components/admin/pages/Students'));
+const Classes = lazy(() => import('./components/admin/pages/Classes'));
+const Orders = lazy(() => import('./components/admin/pages/Orders'));
 
 function App() {
   const location = useLocation();
@@ -56,74 +68,62 @@ function App() {
     '/admin/orders',
   ].includes(location.pathname);
 
+  // Use React Router's useEffect to handle navigation side effects if needed
   useEffect(() => {
-    // Store the current pathname
-    const currentPath = location.pathname;
-    const lastPath = sessionStorage.getItem('lastPath');
-    
-    if (lastPath && lastPath !== currentPath) {
-      // Clear the stored path before reloading
-      sessionStorage.removeItem('lastPath');
-      // Reload the page
-      window.location.href = currentPath;
-      return;
-    }
-      
-    // Save the current path
-    sessionStorage.setItem('lastPath', currentPath);
+    // Scroll to top on route change
+    window.scrollTo(0, 0);
   }, [location.pathname]);
   
   return (
     <AuthProvider>
       <div className="min-h-screen">
       {!hideHeaderFooter && <Header />}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/account/register" element={<Register />} />
-        <Route path="/account/login" element={<Login />} />
-        {/* <Route path="/live-classes" element={<LiveClasses />} /> */}
-        {/* <Route path="/about" element={<About />} /> */}
-        {/* <Route path="/faqs" element={<FAQs />} /> */}
-        <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<NotFound />} />
-        {/* Teacher Routes */}
-        <Route path="/teacher" element={
-          <ProtectedRoute allowedRoles={['teacher']}>
-            <TeacherDashboard />
-          </ProtectedRoute>
-        }>
-          <Route path="profile" element={<TeacherProfile />} />
-          <Route path="classes" element={<ClassManagement />} />
-          <Route path="calendar" element={<TeacherCalendar />} />
-          <Route path="issues" element={<IssueReporting />} />
-        </Route>
-        {/* Student Routes */}
-        <Route path="/student" element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <StudentDashboard />
-          </ProtectedRoute>
-        }>
-            <Route path="classes" element={<BrowseClasses />} />
-            <Route path="subscription" element={<Subscription />} />
-            <Route path="reviews" element={<TeacherReviews />} />
-            <Route path="one-on-one" element={<OneOnOneBooking />} />
-          </Route>
-          {/* Admin Routes */}
-          <Route path="/admin/*" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminDashboard />
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/account/register" element={<Register />} />
+          <Route path="/account/login" element={<Login />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
+          {/* Teacher Routes */}
+          <Route path="/teacher" element={
+            <ProtectedRoute allowedRoles={['teacher']}>
+              <TeacherDashboard />
             </ProtectedRoute>
           }>
-            <Route index element={<StaticPages />} />
-            <Route path="pages" element={<StaticPages />} />
-            <Route path="blog" element={<BlogPosts />} />
-            <Route path="packages" element={<Packages />} />
-            <Route path="classes" element={<Classes />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="teachers" element={<Teachers />} />
-            <Route path="students" element={<Students />} />
+            <Route path="profile" element={<TeacherProfile />} />
+            <Route path="classes" element={<ClassManagement />} />
+            <Route path="calendar" element={<TeacherCalendar />} />
+            <Route path="issues" element={<IssueReporting />} />
           </Route>
-      </Routes>
+          {/* Student Routes */}
+          <Route path="/student" element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }>
+              <Route path="classes" element={<BrowseClasses />} />
+              <Route path="subscription" element={<Subscription />} />
+              <Route path="reviews" element={<TeacherReviews />} />
+              <Route path="one-on-one" element={<OneOnOneBooking />} />
+            </Route>
+            {/* Admin Routes */}
+            <Route path="/admin/*" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }>
+              <Route index element={<StaticPages />} />
+              <Route path="pages" element={<StaticPages />} />
+              <Route path="blog" element={<BlogPosts />} />
+              <Route path="packages" element={<Packages />} />
+              <Route path="classes" element={<Classes />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="teachers" element={<Teachers />} />
+              <Route path="students" element={<Students />} />
+            </Route>
+        </Routes>
+      </Suspense>
       {!hideHeaderFooter && <Footer />}
     </div>
     </AuthProvider>

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
 
 interface StatProps {
@@ -17,10 +17,11 @@ const Stat = ({ count, description }: StatProps) => (
 );
 
 const Hero = () => {
+  const navigate = useNavigate();
   const handleEmailRedirect = () => {
     const emailInput = document.getElementById('email') as HTMLInputElement;
     if (emailInput && emailInput.checkValidity()) {
-      window.location.href = `/account/register?email=${encodeURIComponent(emailInput.value.trim())}`;
+      navigate(`/account/register?email=${encodeURIComponent(emailInput.value.trim())}`);
     } else if (emailInput) {
       emailInput.reportValidity();
     }

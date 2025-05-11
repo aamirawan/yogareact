@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Search, User } from 'lucide-react';
 
 interface NavItem {
@@ -22,6 +22,7 @@ interface UserData {
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
@@ -112,7 +113,7 @@ const Header = () => {
                   localStorage.removeItem('user');
                   localStorage.removeItem('token');
                   setUser(null);
-                  window.location.href = '/';
+                  navigate('/');
                 }}
                 className={`${textColor} ${hoverColor}`}
               >
@@ -172,7 +173,7 @@ const Header = () => {
                         localStorage.removeItem('user');
                         localStorage.removeItem('token');
                         setUser(null);
-                        window.location.href = '/';
+                        navigate('/');
                         setIsMobileMenuOpen(false);
                       }}
                       className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
@@ -222,15 +223,15 @@ const Header = () => {
               <div className="mt-4">
                 <span className="text-gray-600 mr-4">Popular Searches:</span>
                 <div className="flex flex-wrap gap-4">
-                  <a href="/search?q=yoga" className="text-gray-700 hover:text-gray-900 underline">
+                  <Link to="/search?q=yoga" className="text-gray-700 hover:text-gray-900 underline">
                     Yoga
-                  </a>
-                  <a href="/search?q=meditation" className="text-gray-700 hover:text-gray-900 underline">
+                  </Link>
+                  <Link to="/search?q=meditation" className="text-gray-700 hover:text-gray-900 underline">
                     Meditation
-                  </a>
-                  <a href="/search?q=classes" className="text-gray-700 hover:text-gray-900 underline">
+                  </Link>
+                  <Link to="/search?q=classes" className="text-gray-700 hover:text-gray-900 underline">
                     Classes
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
