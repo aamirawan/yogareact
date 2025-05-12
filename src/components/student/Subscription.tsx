@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Check, Users, User } from 'lucide-react';
 import { SubscriptionPlan, RazorpayOptions, RazorpayPaymentResponse } from '../../types/student';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,6 +7,8 @@ const Subscription = () => {
   const navigate = useNavigate();
   const [couponCode, setCouponCode] = useState('');
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+  const [allPlans, setAllPlans] = useState<SubscriptionPlan[]>([]);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'group' | 'one-on-one'>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<SubscriptionPlan | null>(null);
@@ -43,6 +45,7 @@ const Subscription = () => {
       if (!response.ok) throw new Error('Failed to fetch subscription plans');
       const { data } = await response.json();
       setPlans(data);
+      setAllPlans(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -152,12 +155,21 @@ const Subscription = () => {
       if (!response.ok) throw new Error('Invalid coupon code');
 
       const { discount } = await response.json();
-      setPlans(prevPlans =>
-        prevPlans.map(plan => ({
-          ...plan,
-          price: plan.price * (1 - discount)
-        }))
-      );
+      // Apply discount to all plans
+      const discountedPlans = allPlans.map(plan => ({
+        ...plan,
+        price: plan.price * (1 - discount)
+      }));
+      
+      // Update both allPlans and filtered plans
+      setAllPlans(discountedPlans);
+      
+      // Apply current filter
+      if (activeFilter === 'all') {
+        setPlans(discountedPlans);
+      } else {
+        setPlans(discountedPlans.filter(p => p.type === activeFilter));
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid coupon code');
     }
@@ -205,8 +217,41 @@ const Subscription = () => {
         </button>
       </div>
 
+      {/* Package Type Filter */}
+      <div className="flex justify-center space-x-4 mt-6 mb-8">
+        <button
+          onClick={() => {
+            setActiveFilter('all');
+            setPlans(allPlans);
+          }}
+          className={`px-4 py-2 rounded-full font-medium transition-colors ${activeFilter === 'all' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200'}`}
+        >
+          All Packages
+        </button>
+        <button
+          onClick={() => {
+            setActiveFilter('group');
+            setPlans(allPlans.filter(p => p.type === 'group'));
+          }}
+          className={`px-4 py-2 rounded-full font-medium transition-colors flex items-center ${activeFilter === 'group' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200'}`}
+        >
+          <Users className="w-4 h-4 mr-2" />
+          Group Classes
+        </button>
+        <button
+          onClick={() => {
+            setActiveFilter('one-on-one');
+            setPlans(allPlans.filter(p => p.type === 'one-on-one'));
+          }}
+          className={`px-4 py-2 rounded-full font-medium transition-colors flex items-center ${activeFilter === 'one-on-one' ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200'}`}
+        >
+          <User className="w-4 h-4 mr-2" />
+          1-on-1 Sessions
+        </button>
+      </div>
+      
       {/* Plans Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
         {plans.map((plan) => (
           <div
             key={plan.id}
@@ -228,17 +273,34 @@ const Subscription = () => {
                 <span className="text-gray-600">/{plan.durationDays} days</span>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-4">
+                {plan.freeTrialClasses > 0 && (
+                  <div>
+                    <span className="text-sm text-gray-600">Free Trials:</span>
+                    <span className="ml-2 font-medium">{plan.freeTrialClasses}</span>
+                  </div>
+                )}
+                
+                {plan.type === 'group' && (
+                  <div className="flex items-center">
+                    <Users className="w-4 h-4 text-indigo-500 mr-1" />
+                    <span className="text-sm text-gray-600">Group Classes:</span>
+                    <span className="ml-2 font-medium">
+                      {plan.groupClasses === 0 ? 'Unlimited' : plan.groupClasses}
+                    </span>
+                  </div>
+                )}
+                
+                {plan.type === 'one-on-one' && (
+                  <div className="flex items-center">
+                    <User className="w-4 h-4 text-indigo-500 mr-1" />
+                    <span className="text-sm text-gray-600">1-on-1 Sessions:</span>
+                    <span className="ml-2 font-medium">{plan.oneOnOneSessions}</span>
+                  </div>
+                )}
+                
                 <div>
-                  <span className="text-sm text-gray-600">Free Trials:</span>
-                  <span className="ml-2 font-medium">{plan.freeTrialClasses}</span>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Group Classes:</span>
-                  <span className="ml-2 font-medium">{plan.groupClasses}</span>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">1-on-1 Sessions:</span>
-                  <span className="ml-2 font-medium">{plan.oneOnOneSessions}</span>
+                  <span className="text-sm text-gray-600">Duration:</span>
+                  <span className="ml-2 font-medium">{plan.durationDays} days</span>
                 </div>
               </div>
               <ul className="mt-6 space-y-4">

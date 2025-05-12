@@ -26,11 +26,15 @@ export interface StaticPage {
   
   export interface SubscriptionPackage {
     _id?: string;
+    id?: string;
     name: string;
     description?: string;
     durationDays: number;
     price: number;
-    type: 'free' | 'group' | 'one-on-one';
+    freeTrialClasses: number;
+    groupClasses: number; // 0 for unlimited, specific number for limited
+    oneOnOneSessions: number; // Number of allowed sessions
+    type: 'group' | 'one-on-one';
     features: string[];
     isActive: boolean;
     createdAt?: Date;

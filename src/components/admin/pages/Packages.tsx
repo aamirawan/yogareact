@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Power } from 'lucide-react';
+import { Plus, Edit, Power, Users, User, Info } from 'lucide-react';
 import { SubscriptionPackage } from '../../../types/admin';
 
 const Packages = () => {
@@ -13,6 +13,7 @@ const Packages = () => {
     freeTrialClasses: 0,
     groupClasses: 0,
     oneOnOneSessions: 0,
+    type: 'group',
     features: [],
     isActive: true,
   });
@@ -40,9 +41,32 @@ const Packages = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    
+    // Special handling for oneOnOneSessions to fix the issue with 0 not being removed
+    if (name === 'oneOnOneSessions') {
+      // If the field is cleared, set to empty string temporarily to allow typing a new value
+      if (value === '') {
+        setCurrentPackage((prev: Partial<SubscriptionPackage>) => ({
+          ...prev,
+          oneOnOneSessions: value as any, // Use 'as any' to allow empty string temporarily
+        }));
+        return;
+      }
+      // Convert back to number for valid inputs
+      const numValue = Number(value);
+      if (!isNaN(numValue)) {
+        setCurrentPackage((prev: Partial<SubscriptionPackage>) => ({
+          ...prev,
+          oneOnOneSessions: numValue,
+        }));
+      }
+      return;
+    }
+    
+    // Handle other numeric fields
     setCurrentPackage((prev: Partial<SubscriptionPackage>) => ({
       ...prev,
-      [name]: name === 'price' || name === 'durationDays' || name === 'freeTrialClasses' || name === 'groupClasses' || name === 'oneOnOneSessions' 
+      [name]: name === 'price' || name === 'durationDays' || name === 'freeTrialClasses' || name === 'groupClasses'
         ? Number(value) 
         : value,
     }));
@@ -78,6 +102,7 @@ const Packages = () => {
         freeTrialClasses: 0,
         groupClasses: 0,
         oneOnOneSessions: 0,
+        type: 'group',
         features: [],
         isActive: true,
       });
@@ -165,11 +190,15 @@ const Packages = () => {
                 </div>
                 <div>
                   <span className="text-sm text-gray-600">Group Classes:</span>
-                  <span className="ml-2 font-medium">{pkg.groupClasses}</span>
+                  <span className="ml-2 font-medium">{pkg.groupClasses === 0 ? 'Unlimited' : pkg.groupClasses}</span>
                 </div>
                 <div>
                   <span className="text-sm text-gray-600">1-on-1 Sessions:</span>
                   <span className="ml-2 font-medium">{pkg.oneOnOneSessions}</span>
+                </div>
+                <div>
+                  <span className="text-sm text-gray-600">Type:</span>
+                  <span className="ml-2 font-medium capitalize">{pkg.type}</span>
                 </div>
               </div>
               <div className="space-y-2">
@@ -199,7 +228,7 @@ const Packages = () => {
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+          <div className="bg-white rounded-lg max-w-4xl w-full p-8 overflow-y-auto max-h-[90vh]">
             <h3 className="text-xl font-semibold mb-4">
               {currentPackage._id ? 'Edit Package' : 'Add New Package'}
             </h3>
@@ -252,25 +281,49 @@ const Packages = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Free Trial Classes</label>
-                  <input
-                    type="number"
-                    name="freeTrialClasses"
-                    value={currentPackage.freeTrialClasses}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  />
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Package Type</label>
+                <div className="grid grid-cols-2 gap-6">
+                  <div 
+                    onClick={() => setCurrentPackage(prev => ({ ...prev, type: 'group', groupClasses: 0, oneOnOneSessions: 0 }))}
+                    className={`cursor-pointer border rounded-lg p-6 flex flex-col items-center ${currentPackage.type === 'group' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'}`}
+                  >
+                    <Users className={`w-12 h-12 mb-3 ${currentPackage.type === 'group' ? 'text-indigo-500' : 'text-gray-400'}`} />
+                    <span className="font-medium text-lg">Group Classes</span>
+                    <span className="text-sm text-gray-500 mt-2">Unlimited access to group classes</span>
+                  </div>
+                  <div 
+                    onClick={() => setCurrentPackage(prev => ({ ...prev, type: 'one-on-one', groupClasses: 0, oneOnOneSessions: 1 }))}
+                    className={`cursor-pointer border rounded-lg p-6 flex flex-col items-center ${currentPackage.type === 'one-on-one' ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200'}`}
+                  >
+                    <User className={`w-12 h-12 mb-3 ${currentPackage.type === 'one-on-one' ? 'text-indigo-500' : 'text-gray-400'}`} />
+                    <span className="font-medium text-lg">1-on-1 Sessions</span>
+                    <span className="text-sm text-gray-500 mt-2">Limited number of private sessions</span>
+                  </div>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Group Classes</label>
+                  <label className="flex items-center text-sm font-medium text-gray-700">
+                    <span>Group Classes</span>
+                    {currentPackage.type === 'group' && (
+                      <div className="ml-2 relative group">
+                        <Info className="w-4 h-4 text-gray-400" />
+                        <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-2 w-48">
+                          Enter 0 for unlimited group classes
+                        </div>
+                      </div>
+                    )}
+                  </label>
                   <input
                     type="number"
                     name="groupClasses"
                     value={currentPackage.groupClasses}
                     onChange={handleInputChange}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    placeholder={currentPackage.type === 'group' ? "0 for unlimited" : ""}
+                    readOnly={currentPackage.type === 'group'}
                   />
                 </div>
                 <div>
@@ -278,9 +331,12 @@ const Packages = () => {
                   <input
                     type="number"
                     name="oneOnOneSessions"
-                    value={currentPackage.oneOnOneSessions}
+                    value={currentPackage.oneOnOneSessions === 0 && currentPackage.type === 'one-on-one' ? '' : currentPackage.oneOnOneSessions}
                     onChange={handleInputChange}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    min="1"
+                    required={currentPackage.type === 'one-on-one'}
+                    readOnly={currentPackage.type === 'group'}
                   />
                 </div>
               </div>
