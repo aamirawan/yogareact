@@ -1,8 +1,16 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
-import { Calendar, Users, BookOpen, AlertCircle, Settings } from 'lucide-react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Calendar, Users, BookOpen, AlertCircle, Settings, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const TeacherDashboard = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -48,6 +56,17 @@ const TeacherDashboard = () => {
               <AlertCircle className="w-5 h-5 mr-3" />
               Issues
             </Link>
+            
+            {/* Logout Button */}
+            <div className="mt-auto pt-6 border-t border-gray-200 mx-4">
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut className="w-5 h-5 mr-3" />
+                Logout
+              </button>
+            </div>
           </div>
         </nav>
       </div>

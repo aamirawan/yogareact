@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { AuthProvider } from './context/AuthContext';
+import ToastProvider from './context/ToastContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Loading component for Suspense fallback
@@ -22,9 +23,10 @@ const NotFound = lazy(() => import('./components/NotFound'));
 // Teacher components
 const TeacherDashboard = lazy(() => import('./components/teacher/TeacherDashboard'));
 const TeacherProfile = lazy(() => import('./components/teacher/TeacherProfile'));
-const ClassManagement = lazy(() => import('./components/teacher/ClassManagement'));
+const EnhancedClassManagement = lazy(() => import('./components/teacher/EnhancedClassManagement'));
 const TeacherCalendar = lazy(() => import('./components/teacher/TeacherCalendar'));
 const IssueReporting = lazy(() => import('./components/teacher/IssueReporting'));
+const EnhancedClassManagementPage = lazy(() => import('./pages/teacher/EnhancedClassManagementPage'));
 
 // Student components
 const StudentDashboard = lazy(() => import('./components/student/StudentDashboard'));
@@ -53,6 +55,7 @@ function App() {
     '/teacher/profile',
     '/teacher/calendar',
     '/teacher/issues',
+    '/teacher/enhanced-classes',
     '/student',
     '/student/classes',
     '/student/subscription',
@@ -76,10 +79,11 @@ function App() {
   
   return (
     <AuthProvider>
-      <div className="min-h-screen">
-      {!hideHeaderFooter && <Header />}
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
+      <ToastProvider>
+        <div className="min-h-screen">
+        {!hideHeaderFooter && <Header />}
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/account/register" element={<Register />} />
           <Route path="/account/login" element={<Login />} />
@@ -92,10 +96,15 @@ function App() {
             </ProtectedRoute>
           }>
             <Route path="profile" element={<TeacherProfile />} />
-            <Route path="classes" element={<ClassManagement />} />
+            <Route path="classes" element={<EnhancedClassManagement />} />
             <Route path="calendar" element={<TeacherCalendar />} />
             <Route path="issues" element={<IssueReporting />} />
           </Route>
+          <Route path="/teacher/enhanced-classes" element={
+            <ProtectedRoute allowedRoles={['teacher']}>
+              <EnhancedClassManagementPage />
+            </ProtectedRoute>
+          } />
           {/* Student Routes */}
           <Route path="/student" element={
             <ProtectedRoute allowedRoles={['student']}>
@@ -122,10 +131,11 @@ function App() {
               <Route path="teachers" element={<Teachers />} />
               <Route path="students" element={<Students />} />
             </Route>
-        </Routes>
-      </Suspense>
-      {!hideHeaderFooter && <Footer />}
-    </div>
+          </Routes>
+        </Suspense>
+        {!hideHeaderFooter && <Footer />}
+      </div>
+      </ToastProvider>
     </AuthProvider>
   );
 }

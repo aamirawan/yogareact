@@ -1,10 +1,18 @@
 import React from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { FileText, BookOpen, Package, Settings, LayoutDashboard, Users, GraduationCap, Calendar, ShoppingCart } from 'lucide-react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { FileText, BookOpen, Package, Settings, LayoutDashboard, Users, GraduationCap, Calendar, ShoppingCart, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminDashboard = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const isActive = (path: string) => {
     return currentPath.includes(path) ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-100';
@@ -78,6 +86,17 @@ const AdminDashboard = () => {
               <Settings className="w-5 h-5 mr-3" />
               Settings
             </Link> */}
+            
+            {/* Logout Button */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut className="w-5 h-5 mr-3" />
+                Logout
+              </button>
+            </div>
           </div>
         </nav>
       </div>

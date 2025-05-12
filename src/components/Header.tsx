@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, User } from 'lucide-react';
+import { Menu, X, Search, User, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface NavItem {
   label: string;
@@ -23,6 +24,7 @@ interface UserData {
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, userRole, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
@@ -105,18 +107,17 @@ const Header = () => {
           >
             Book A Free Trial
           </Link>
-          {user ? (
+          {isAuthenticated ? (
             <div className="flex items-center space-x-4">
-              <span className={textColor}>{user.name}</span>
+              <span className={textColor}>{user?.name || userRole}</span>
               <button 
                 onClick={() => {
-                  localStorage.removeItem('user');
-                  localStorage.removeItem('token');
-                  setUser(null);
+                  logout();
                   navigate('/');
                 }}
-                className={`${textColor} ${hoverColor}`}
+                className={`${textColor} ${hoverColor} flex items-center`}
               >
+                <LogOut size={16} className="mr-1" />
                 Logout
               </button>
             </div>
@@ -165,19 +166,18 @@ const Header = () => {
                 >
                   Book A Free Trial
                 </Link>
-                {user ? (
+                {isAuthenticated ? (
                   <>
-                    <span className="block text-center text-gray-700">{user.name}</span>
+                    <span className="block text-center text-gray-700">{user?.name || userRole}</span>
                     <button 
                       onClick={() => {
-                        localStorage.removeItem('user');
-                        localStorage.removeItem('token');
-                        setUser(null);
+                        logout();
                         navigate('/');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors"
+                      className="block w-full text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center"
                     >
+                      <LogOut size={16} className="mr-2" />
                       Logout
                     </button>
                   </>

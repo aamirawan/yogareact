@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GroupClass } from '../../types/teacher';
-import { Calendar, Clock, Users, Tag } from 'lucide-react';
+import { Clock, Users, Tag, AlertCircle } from 'lucide-react';
 
 const ClassManagement = () => {
+  const navigate = useNavigate();
   const [classes, setClasses] = useState<GroupClass[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEnhancedBanner, setShowEnhancedBanner] = useState(true);
   const [newClass, setNewClass] = useState<Partial<GroupClass>>({
     user_id: '',
     title: '',
@@ -109,16 +112,61 @@ const ClassManagement = () => {
     }
   };
 
+  const handleSwitchToEnhanced = () => {
+    navigate('/teacher/enhanced-classes');
+  };
+
   return (
     <div className="space-y-6">
+      {showEnhancedBanner && (
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-lg shadow-md mb-6">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <AlertCircle className="h-6 w-6 text-white" />
+            </div>
+            <div className="ml-3 flex-1">
+              <h3 className="text-lg font-medium">Enhanced Class Management Available!</h3>
+              <div className="mt-2">
+                <p className="text-sm">
+                  Try our new enhanced class management system with iPhone-like recurring options, 
+                  reminder settings, and a beautiful calendar view!
+                </p>
+                <div className="mt-4">
+                  <button
+                    onClick={handleSwitchToEnhanced}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-indigo-600 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Switch to Enhanced Mode
+                  </button>
+                  <button
+                    onClick={() => setShowEnhancedBanner(false)}
+                    className="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Class Management</h2>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-        >
-          Create New Class
-        </button>
+        <div className="space-x-4">
+          <button
+            onClick={handleSwitchToEnhanced}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+          >
+            Enhanced Mode
+          </button>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          >
+            Create New Class
+          </button>
+        </div>
       </div>
 
       {/* Class List */}
@@ -199,8 +247,8 @@ const ClassManagement = () => {
                   <label className="block text-sm font-medium text-gray-700">Max Participants</label>
                   <input
                     type="number"
-                    name="maxParticipants"
-                    value={newClass.maxParticipants}
+                    name="max_participants"
+                    value={newClass.max_participants}
                     onChange={handleInputChange}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />

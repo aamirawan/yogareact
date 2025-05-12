@@ -3,6 +3,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { TeacherAvailability } from '../../types/teacher';
 import './TeacherCalendar.css'; // Import custom CSS for styling
+import { Clock } from 'lucide-react';
 
 const TeacherCalendar = () => {
   const [availability, setAvailability] = useState<TeacherAvailability[]>([]);
@@ -10,6 +11,25 @@ const TeacherCalendar = () => {
   const [startTime, setStartTime] = useState<string>('09:00');
   const [endTime, setEndTime] = useState<string>('10:00');
   const [error, setError] = useState<string | null>(null);
+  
+  // Generate time options in 30-minute intervals from 6:00 AM to 10:00 PM
+  const timeOptions = React.useMemo(() => {
+    const options = [];
+    for (let hour = 6; hour <= 22; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const hourStr = hour.toString().padStart(2, '0');
+        const minuteStr = minute.toString().padStart(2, '0');
+        const timeValue = `${hourStr}:${minuteStr}`;
+        const displayTime = new Date(`2000-01-01T${timeValue}:00`).toLocaleTimeString([], {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+        options.push({ value: timeValue, label: displayTime });
+      }
+    }
+    return options;
+  }, []);
 
   // Fetch existing availability slots when component mounts
   useEffect(() => {
@@ -39,6 +59,32 @@ const TeacherCalendar = () => {
 
     fetchAvailability();
   }, []);
+
+  // Handle start time change
+  const handleStartTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStartTime = e.target.value;
+    setStartTime(newStartTime);
+    
+    // Ensure end time is after start time
+    if (newStartTime >= endTime) {
+      // Find the next time slot after the selected start time
+      const startIndex = timeOptions.findIndex(option => option.value === newStartTime);
+      if (startIndex < timeOptions.length - 1) {
+        setEndTime(timeOptions[startIndex + 1].value);
+      }
+    }
+  };
+
+  // Handle end time change
+  const handleEndTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newEndTime = e.target.value;
+    if (newEndTime > startTime) {
+      setEndTime(newEndTime);
+    } else {
+      setError('End time must be after start time');
+      setTimeout(() => setError(null), 3000);
+    }
+  };
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
@@ -182,15 +228,61 @@ const TeacherCalendar = () => {
       />
       {selectedDate && (
         <div className="time-selection">
-          <label>
-            Start Time:
-            <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
-          </label>
-          <label>
-            End Time:
-            <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-          </label>
-          <button onClick={handleSaveSlot}>Save Slot</button>
+          <div className="time-selection-header">
+            <h3>Add Availability for {selectedDate.toLocaleDateString()}</h3>
+          </div>
+          
+          <div className="time-selection-inputs">
+            <div className="time-input-group">
+              <label htmlFor="startTime" className="time-label">
+                <Clock size={16} className="time-icon" />
+                Start Time:
+              </label>
+              <select
+                id="startTime"
+                value={startTime}
+                onChange={handleStartTimeChange}
+                className="time-select"
+              >
+                {timeOptions.map((option) => (
+                  <option key={`start-${option.value}`} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="time-input-group">
+              <label htmlFor="endTime" className="time-label">
+                <Clock size={16} className="time-icon" />
+                End Time:
+              </label>
+              <select
+                id="endTime"
+                value={endTime}
+                onChange={handleEndTimeChange}
+                className="time-select"
+              >
+                {timeOptions.map((option) => (
+                  <option 
+                    key={`end-${option.value}`} 
+                    value={option.value}
+                    disabled={option.value <= startTime}
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          <button 
+            onClick={handleSaveSlot}
+            className="save-slot-button"
+          >
+            Save Availability
+          </button>
+          
           {error && <div className="error-message">{error}</div>}
         </div>
       )}
