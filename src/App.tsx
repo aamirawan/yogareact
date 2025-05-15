@@ -1,7 +1,7 @@
 import { useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from './components/common/Header2';
+import Footer from './components/common/Footer';
 import { AuthProvider } from './context/AuthContext';
 import ToastProvider from './context/ToastContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -14,7 +14,7 @@ const LoadingSpinner = () => (
 );
 
 // Lazy load components for better performance
-const Home = lazy(() => import('./components/home/Home'));
+const Home = lazy(() => import('./components/home/Home')); // Using the new homepage
 const Register = lazy(() => import('./components/auth/Register'));
 const Login = lazy(() => import('./components/auth/Login'));
 const Contact = lazy(() => import('./components/contact/ContactUs'));
@@ -31,6 +31,7 @@ const EnhancedClassManagementPage = lazy(() => import('./pages/teacher/EnhancedC
 // Student components
 const StudentDashboard = lazy(() => import('./components/student/StudentDashboard'));
 const BrowseClasses = lazy(() => import('./components/student/BrowseClasses'));
+const GroupClasses = lazy(() => import('./components/student/GroupClasses'));
 const Subscription = lazy(() => import('./components/student/Subscription'));
 const TeacherReviews = lazy(() => import('./components/student/TeacherReviews'));
 const OneOnOneBooking = lazy(() => import('./components/student/OneOnOneBooking'));
@@ -49,7 +50,8 @@ function App() {
   const location = useLocation();
 
   const hideHeaderFooter = [
-    '/account/register', 
+    '/account/login',    '/account/register',
+    '/new',
     '/teacher',
     '/teacher/classes',
     '/teacher/profile',
@@ -89,6 +91,7 @@ function App() {
           <Route path="/account/login" element={<Login />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="groupclasses" element={<GroupClasses />} />
           {/* Teacher Routes */}
           <Route path="/teacher" element={
             <ProtectedRoute allowedRoles={['teacher']}>
@@ -111,7 +114,7 @@ function App() {
               <StudentDashboard />
             </ProtectedRoute>
           }>
-              <Route path="classes" element={<BrowseClasses />} />
+              <Route path="classes" element={<BrowseClasses />} />              
               <Route path="subscription" element={<Subscription />} />
               <Route path="reviews" element={<TeacherReviews />} />
               <Route path="one-on-one" element={<OneOnOneBooking />} />
@@ -140,4 +143,5 @@ function App() {
   );
 }
 
+// Make sure this is properly exported as default
 export default App;

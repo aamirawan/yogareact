@@ -1,66 +1,64 @@
-import React, { useEffect } from 'react';
-import Hero from './Hero';
-import About from './About';
-import Features from './Features';
-import LiveClasses from './LiveClasses';
-import YogaClasses from './YogaClasses';
-import YogaBar from './YogaBar';
-import YogaPackages from './YogaPackages';
+
+// Header is now handled by App.tsx
+import PromoBanner from '../common/PromoBanner';
+import HeroSection from './HeroSection';
+import TrustpilotReviews from './TrustpilotReviews';
+import AuthenticYogaSection from './AuthenticYogaSection';
+import YogaInstructorsSection from './YogaInstructorsSection';
+import YogaSessionsSection from './YogaSessionsSection';
+import YogaPlansSection from './YogaPlansSection';
+import YogaRetreatSection from './YogaRetreatSection';
+import BlogSection from './BlogSection';
+import FaqSection from './FaqSection';
+import YogaRetreatExperienceSection from './YogaRetreatExperienceSection';
+// Footer is now handled by App.tsx
 
 const Home = () => {
-  // Add any necessary JavaScript functionality here
-  useEffect(() => {
-    // This would be where we'd add the carousel/slider functionality
-    // that was in the original jQuery code
-    const handleDescriptionHover = () => {
-      const descriptions = document.querySelectorAll('.yoga-info-description');
-      
-      descriptions.forEach(description => {
-        const overlay = description.nextElementSibling as HTMLElement;
-        const icon = description.querySelector('.description-svg') as SVGElement;
-        
-        description.addEventListener('mouseenter', () => {
-          if (overlay) overlay.style.display = 'block';
-          if (icon) icon.classList.add('rotate');
-        });
-        
-        description.addEventListener('mouseleave', () => {
-          if (overlay) overlay.style.display = 'none';
-          if (icon) icon.classList.remove('rotate');
-        });
-        
-        if (overlay) {
-          overlay.addEventListener('mouseenter', () => {
-            overlay.style.display = 'block';
-            if (icon) icon.classList.add('rotate');
-          });
-          
-          overlay.addEventListener('mouseleave', () => {
-            overlay.style.display = 'none';
-            if (icon) icon.classList.remove('rotate');
-          });
-        }
-      });
-    };
-    
-    // Call the function after a short delay to ensure DOM is ready
-    setTimeout(handleDescriptionHover, 500);
-    
-    return () => {
-      // Cleanup if needed
-    };
-  }, []);
-
   return (
-    <main className="min-h-screen">
-      <Hero />
-      <About />
-      <Features />
-      <LiveClasses />
-      <YogaClasses />
-      <YogaPackages />
-      <YogaBar />
-    </main>
+    <div className="w-full font-inter">
+      {/* Header is now in App.tsx */}
+      
+      {/* Promo Banner */}
+      <PromoBanner 
+        message="Join Group Sessions Monthly Unlimited!" 
+        buttonText="Buy Now" 
+        buttonLink="/packages"
+      />
+      
+      {/* Hero Section */}
+      <HeroSection />
+      
+      {/* Trustpilot Reviews */}
+      <TrustpilotReviews />
+      
+      {/* Authentic Indian Yoga Section */}
+      <div className="mt-10">
+        <AuthenticYogaSection />
+      </div>
+      
+      {/* Yoga Instructors Section */}
+      <YogaInstructorsSection />
+      
+      {/* Yoga Sessions Section */}
+      <YogaSessionsSection />
+      
+      {/* Yoga Plans Section */}
+      <YogaPlansSection />
+      
+      {/* Yoga Retreat Section */}
+      <YogaRetreatSection />
+      
+      {/* Blog Section */}
+      <BlogSection />
+      
+      {/* FAQ Section */}
+      <FaqSection />
+      
+      {/* Yoga Retreat Experience Section */}
+      <YogaRetreatExperienceSection />
+      
+      {/* Footer is now in App.tsx */}
+    </div>
   );
 };
 

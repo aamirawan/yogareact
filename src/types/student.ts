@@ -48,6 +48,45 @@ export interface Student {
   }
   
   export type BookingStatus = 'scheduled' | 'completed' | 'cancelled' | 'no-show';
+
+// Razorpay Types
+export interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayPaymentResponse) => void;
+  prefill?: {
+    name?: string;
+    email?: string;
+    contact?: string;
+  };
+  theme?: {
+    color?: string;
+  };
+}
+
+export interface RazorpayPaymentResponse {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+}
+
+// Extend the Window interface to include Razorpay
+declare global {
+  interface Window {
+    Razorpay: {
+      new(options: RazorpayOptions): RazorpayInstance;
+    };
+  }
+}
+
+export interface RazorpayInstance {
+  open(): void;
+  on(event: string, callback: (response: any) => void): void;
+}
   
   export interface TeacherReview {
     id: string;

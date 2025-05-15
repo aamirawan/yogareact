@@ -15,10 +15,32 @@ const Subscription = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
+    // Remove any existing Razorpay scripts to avoid duplicates
+    const existingScript = document.getElementById('razorpay-checkout-js');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
+    // Add the script with proper ID and attributes
     const script = document.createElement("script");
+    script.id = 'razorpay-checkout-js';
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
+    script.crossOrigin = "anonymous";
+    
+    // Add event listeners to track script loading
+    script.onload = () => console.log('Razorpay script loaded successfully');
+    script.onerror = () => console.error('Failed to load Razorpay script');
+    
     document.body.appendChild(script);
+    
+    // Cleanup on component unmount
+    return () => {
+      const script = document.getElementById('razorpay-checkout-js');
+      if (script) {
+        script.remove();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -91,7 +113,16 @@ const Subscription = () => {
         return;
       }
 
-      const { orderId, amount, key, currency } = await res.json();
+      const response = await res.json();
+      console.log('Order creation response:', response);
+      
+      if (!response.key) {
+        console.error('Razorpay key is missing from the response');
+        setError('Payment initialization failed. Please try again later.');
+        return;
+      }
+      
+      const { orderId, amount, key, currency } = response;
 
       const options: RazorpayOptions = {
         key,
@@ -129,8 +160,26 @@ const Subscription = () => {
         }
       };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      console.log('Razorpay options:', options);
+      
+      // Make sure Razorpay is loaded
+      if (typeof window.Razorpay === 'undefined') {
+        console.error('Razorpay is not loaded');
+        setError('Payment gateway is not available. Please try again later.');
+        return;
+      }
+      
+      try {
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response: any) {
+          console.error('Payment failed:', response.error);
+          setError(`Payment failed: ${response.error.description}`);
+        });
+        rzp.open();
+      } catch (rzpError) {
+        console.error('Error initializing Razorpay:', rzpError);
+        setError('Failed to initialize payment gateway. Please try again.');
+      }
     } catch (err) {
       console.error(err);
       setError('Payment failed. Please try again.');

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Clock, Star } from 'lucide-react';
 import { Teacher, TimeSlot } from '../../types/student';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { format, isSameDay } from 'date-fns';
+import { classesApi } from '../../utils/api';
 
 // Add custom styles for the calendar
 const calendarStyles = `
@@ -73,6 +74,7 @@ const OneOnOneBooking = () => {
   const fetchTeachers = async () => {
     setIsLoading(true);
     try {
+      // We'll keep using the direct fetch for teachers since we don't have a specific API function for this yet
       const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/teachers/profile`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -94,18 +96,8 @@ const OneOnOneBooking = () => {
   const fetchTimeSlots = async (teacherId: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/students/get/one/on/one/sessions?teacher_id=${teacherId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          }
-        }
-      );
-
-      if (!response.ok) throw new Error('Failed to fetch time slots');
-      
-      const data = await response.json();
+      // Use the API utility function instead of direct fetch
+      const data = await classesApi.getOneOnOneSessions(teacherId);
       
       // Handle case when no slots are available
       if (!Array.isArray(data)) {
@@ -137,22 +129,14 @@ const OneOnOneBooking = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/student/book-session`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          teacher_id: selectedTeacher.id,
-          availability_id: selectedSlot.id,
-          session_date: selectedSlot.session_date,
-          start_time: selectedSlot.start_time,
-          end_time: selectedSlot.end_time,
-        }),
+      // Use the API utility function instead of direct fetch
+      await classesApi.bookOneOnOneSession({
+        teacher_id: selectedTeacher.id,
+        availability_id: selectedSlot.id,
+        session_date: selectedSlot.session_date,
+        start_time: selectedSlot.start_time,
+        end_time: selectedSlot.end_time,
       });
-
-      if (!response.ok) throw new Error('Failed to book session');
 
       setShowConfirmation(true);
     } catch (err) {
@@ -189,7 +173,8 @@ const OneOnOneBooking = () => {
     });
   };
 
-  const handleDateChange = (value: Date | Date[]) => {
+  // Use a more generic type to match react-calendar's onChange prop
+  const handleDateChange = (value: any) => {
     if (value instanceof Date) {
       setSelectedDate(value);
       setSelectedSlot(null); // Reset selected slot when date changes
@@ -267,7 +252,7 @@ const OneOnOneBooking = () => {
               tileClassName={tileClassName}
               tileDisabled={tileDisabled}
               className="w-full border-none"
-              formatDay={(locale, date) => format(date, 'd')}
+              formatDay={(_, date) => format(date, 'd')}
             />
           </div>
 
