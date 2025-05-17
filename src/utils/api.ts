@@ -1,5 +1,5 @@
 // API base URL
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3000/api'; // Default to localhost if env var not set
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL + '/api' || 'http://localhost:3000/api'; // Default to localhost if env var not set
 
 // Helper function to handle fetch requests with authentication
 const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
@@ -85,9 +85,7 @@ export const classesApi = {
     availability_id: string,
     session_date: string,
     start_time: string,
-    end_time: string,
-    booking_type?: string,
-    credit_used?: number
+    end_time: string
   }) => {
     try {
       return await fetchWithAuth('/students/bookings/one-on-one', {
