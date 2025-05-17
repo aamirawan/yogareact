@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DAYS_OF_WEEK } from '../../types/enhancedClass';
 
 interface RecurrenceOptionsProps {
@@ -14,6 +14,15 @@ const RecurrenceOptions = ({
 }: RecurrenceOptionsProps) => {
   const [showEndDate, setShowEndDate] = useState(!!recurringEndDate);
 
+  // Effect to ensure is_recurring and recurrence_type are set correctly when component mounts
+  useEffect(() => {
+    // If we have recurring days but is_recurring is not set, set it
+    if (recurringDays.length > 0) {
+      onRecurrenceChange('is_recurring', true);
+      onRecurrenceChange('recurrence_type', 'weekly');
+    }
+  }, []);
+
   const handleDayToggle = (day: number) => {
     // Ensure recurringDays is an array
     const currentDays = Array.isArray(recurringDays) ? recurringDays : [];
@@ -25,19 +34,19 @@ const RecurrenceOptions = ({
     // Toggle the day
     const newDays = isSelected
       ? normalizedDays.filter(d => d !== day)
-      : [...normalizedDays, day];
+      : [...normalizedDays, day].sort((a, b) => a - b); // Sort days for consistency
     
     // Update the recurring days
     onRecurrenceChange('recurring_days', newDays);
     
-    // Set isRecurring based on whether any days are selected
-    onRecurrenceChange('isRecurring', newDays.length > 0);
+    // Set is_recurring based on whether any days are selected
+    onRecurrenceChange('is_recurring', newDays.length > 0);
     
-    // If days are selected, set recurrence type to weekly
+    // If days are selected, set recurrence_type to weekly
     if (newDays.length > 0) {
-      onRecurrenceChange('recurrenceType', 'weekly');
+      onRecurrenceChange('recurrence_type', 'weekly');
     } else {
-      onRecurrenceChange('recurrenceType', 'none');
+      onRecurrenceChange('recurrence_type', 'none');
     }
   };
 

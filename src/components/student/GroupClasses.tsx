@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import categoryIcon from '../../assets/images/category.svg';
 import dayIcon from '../../assets/images/day.svg';
 import nightIcon from '../../assets/images/night.svg';
 import { classesApi } from '../../utils/api'; // Using fetch-based API client
 import { formatDateToString, getNextDays, getDayOfWeekShort, formatDateForDisplay, getDayOfWeekNumber, createClassInstancesForDate, formatTimeTo12Hour } from '../../utils/dateUtils';
+import { useAuth } from '../../context/AuthContext';
 
 // Types
 interface ClassItem {
@@ -84,7 +86,20 @@ const TagFilter: React.FC<{
 const ClassCard: React.FC<{
   classItem: ClassItem;
   onJoin: (classItem: ClassItem) => void;
-}> = ({ classItem, onJoin }) => {
+  isAuthenticated: boolean;
+}> = ({ classItem, onJoin, isAuthenticated }) => {
+  const navigate = useNavigate();
+  
+  const handleButtonClick = () => {
+    if (isAuthenticated) {
+      // If user is logged in, proceed with booking
+      onJoin(classItem);
+    } else {
+      // If user is not logged in, redirect to login page
+      navigate('/account/login');
+    }
+  };
+  
   return (
     <div className="w-full border border-[#CFCFCF] rounded-lg p-5 mb-5 relative">
       {/* Time and duration on the same line at the top */}
@@ -130,7 +145,7 @@ const ClassCard: React.FC<{
           {/* Button and signup count */}
           <div className="mt-auto">
             <button
-              onClick={() => onJoin(classItem)}
+              onClick={handleButtonClick}
               className={`px-5 py-2 rounded-lg text-white text-sm font-medium ${
                 classItem.isJoined ? 'bg-[#E32552]' : 'bg-[#121212]'
               }`}
@@ -150,13 +165,14 @@ const DayGroup: React.FC<{
   title: string;
   classes: ClassItem[];
   onJoin: (classItem: ClassItem) => void;
-}> = ({ title, classes, onJoin }) => {
+  isAuthenticated: boolean;
+}> = ({ title, classes, onJoin, isAuthenticated }) => {
   return (
     <div className="mb-8">
       <h2 className="text-xl font-medium text-[#121212] mb-4">{title}</h2>
       <div className="space-y-4">
         {classes.map((classItem) => (
-          <ClassCard key={classItem.id} classItem={classItem} onJoin={onJoin} />
+          <ClassCard key={classItem.id} classItem={classItem} onJoin={onJoin} isAuthenticated={isAuthenticated} />
         ))}
       </div>
     </div>
@@ -205,6 +221,9 @@ const SuccessPopup: React.FC<SuccessPopupProps> = ({ isOpen, onClose, classTime,
 
 // Main component
 const GroupClasses: React.FC = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  
   // State for theme toggle
   const [isDarkMode, setIsDarkMode] = useState(false);
   
@@ -268,6 +287,7 @@ const GroupClasses: React.FC = () => {
       try {
         // We don't need to pass a specific date to the API anymore
         // as we'll filter classes based on recurring days
+        // For non-logged-in users, the API will return all classes without student-specific filtering
         const response = await classesApi.getAvailableClasses();
         
         if (!response.success) {
@@ -316,8 +336,13 @@ const GroupClasses: React.FC = () => {
         const classesForSelectedDate = createClassInstancesForDate(transformedClasses, selectedDateObj);
         console.log('Classes for selected date:', classesForSelectedDate);
         
-        // Now check if any of these classes are already booked by the user
+        // Now check if any of these classes are already booked by the user (only if logged in)
         const updatedClasses = classesForSelectedDate.map(cls => {
+          // For non-logged-in users, no classes are joined
+          if (!isAuthenticated) {
+            return cls; // Return class as-is without checking bookings
+          }
+          
           // For recurring classes, we need to get the original class ID (without the date suffix)
           const originalClassId = cls.id.includes('_') ? cls.id.split('_')[0] : cls.id;
           
@@ -403,7 +428,7 @@ const GroupClasses: React.FC = () => {
     };
     
     fetchClasses();
-  }, [selectedDateObj, dates]); // Refetch when the selected date or dates array changes
+  }, [selectedDateObj, dates, isAuthenticated, userBookings]); // Refetch when the selected date, dates array, or auth state changes
   
   // Handle date selection
   const handleDateSelect = (day: number) => {
@@ -416,6 +441,13 @@ const GroupClasses: React.FC = () => {
 
   // Fetch user bookings function (to be reused)
   const fetchUserBookings = async () => {
+    // If user is not authenticated, don't try to fetch bookings
+    if (!isAuthenticated) {
+      console.log('User not authenticated, skipping booking fetch');
+      setUserBookings([]);
+      return [];
+    }
+    
     try {
       const response = await classesApi.getUserBookings();
       
@@ -454,6 +486,14 @@ const GroupClasses: React.FC = () => {
 
   // Handle joining a class
   const handleJoinClass = async (classItem: ClassItem) => {
+    // For non-logged in users, this function won't be called directly
+    // as the ClassCard component will redirect to login page instead
+    // This is just a safeguard
+    if (!isAuthenticated) {
+      navigate('/account/login');
+      return;
+    }
+    
     try {
       setLoading(true);
       
@@ -626,6 +666,7 @@ const GroupClasses: React.FC = () => {
                 title={formatDateForDisplay(selectedDateObj)}
                 classes={getClassesForSelectedDate()}
                 onJoin={handleJoinClass}
+                isAuthenticated={isAuthenticated}
               />
             ) : (
               <div className="text-center py-8">

@@ -32,7 +32,7 @@ const HeroSection = () => {
             </p>
             
             <Link 
-              to="/book-trial" 
+              to="/account/login" 
               className="w-[286px] h-[62.81px] mt-10 mx-auto flex justify-center items-center bg-[#E32552] rounded-[10px] px-[36.8px] py-[18.4px]"
             >
               <span className="font-medium text-[21.47px] leading-[26px] text-white text-center">

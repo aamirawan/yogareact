@@ -23,6 +23,7 @@ const Home = () => {
         message="Join Group Sessions Monthly Unlimited!" 
         buttonText="Buy Now" 
         buttonLink="/packages"
+        scrollToSection="yogaPlansSection"
       />
       
       {/* Hero Section */}

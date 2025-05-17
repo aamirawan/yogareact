@@ -85,7 +85,9 @@ export const classesApi = {
     availability_id: string,
     session_date: string,
     start_time: string,
-    end_time: string
+    end_time: string,
+    booking_type?: string,
+    credit_used?: number
   }) => {
     try {
       return await fetchWithAuth('/students/bookings/one-on-one', {

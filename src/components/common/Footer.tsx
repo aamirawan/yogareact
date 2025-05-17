@@ -3,7 +3,7 @@ import logo from "../../assets/images/logo.webp";
 
 const Footer = () => {
   return (
-    <footer className="w-full relative bg-white pt-[50px] pb-[30px]">
+    <footer className="w-full relative bg-white pt-[50px]">
       {/* Marquee Section at the top */}
       <div className="absolute w-full left-0 top-0 overflow-hidden bg-[#121212] text-white py-4">
         <div className="relative">
@@ -54,7 +54,7 @@ const Footer = () => {
       </div>
       
       {/* Main content container */}
-      <div className="container mx-auto px-[100px] flex justify-between mt-[70px]">
+      <div className="mx-auto px-[100px] flex justify-between mt-[70px]">
         {/* Left section with newsletter */}
         <div className="w-[438px]">
           <h3 className="font-bold text-[16px] leading-[23px] text-[#121212]">
@@ -149,17 +149,17 @@ const Footer = () => {
       
       {/* Bottom section with logo and copyright */}
       <div className="w-full mt-[60px] py-[40px] bg-[#F9FAFA]">
-        <div className="container mx-auto px-[100px] flex flex-col items-center">
-          <div className="flex items-center justify-center mb-4">
+        <div className="mx-auto px-[100px] flex flex-row items-center justify-between">                  
+          <p className="text-left text-[14px] text-[#121212] max-w-[430px]">
+            <strong>Elevate Yoga By India For The World.<br /></strong>
+            On A Mission To Make Authentic Yoga, A Part Of Each Household.
+          </p>
+
+          <div className="flex items-center justify-center">
             <img src={logo} alt="Elevate Yoga Logo" className="h-[50px]" />
           </div>
           
-          <p className="text-center text-[14px] text-[#121212] mt-4">
-            Elevate Yoga By India For The World.<br />
-            On A Mission To Make Authentic Yoga, A Part Of Each Household.
-          </p>
-          
-          <p className="text-center text-[12px] text-[#121212] mt-4">
+          <p className="text-right text-[12px] text-[#121212] max-w-[320px]">
             © 2025 Elevate Yoga By Inspiro Digital. All rights reserved.
           </p>
         </div>

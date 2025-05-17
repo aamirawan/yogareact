@@ -10,7 +10,7 @@ interface NavItemProps {
   path: string;
 }
 
-const NavMenu: React.FC<{ items: NavItemProps[]; isLoggedIn: boolean }> = ({ items, isLoggedIn }) => {
+const NavMenu: React.FC<{ items: NavItemProps[]; showBookTrial: boolean }> = ({ items, showBookTrial }) => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
@@ -19,7 +19,7 @@ const NavMenu: React.FC<{ items: NavItemProps[]; isLoggedIn: boolean }> = ({ ite
       className="absolute top-[20px]" 
       style={{ 
         top: '27px', 
-        right: isLoggedIn ? '195px' : '250px' 
+        right: showBookTrial ? '250px' : '195px' 
       }}>
       <div className="relative flex items-center space-x-5">
         {items.map((item, index) => (
@@ -99,37 +99,26 @@ const Header2 = () => {
       <div className="max-w-[1440px] h-full mx-auto relative">
         {/* Logo */}
         <div className="absolute left-[69px] top-1/2 -translate-y-1/2">
-          <img 
-            src={logoImage}
-            alt="Elevate Yoga" 
-            className="h-10"
-            style={{ objectFit: 'contain' }}
-          />
+          <Link to="/">
+            <img 
+              src={logoImage}
+              alt="Elevate Yoga" 
+              className="h-10"
+              style={{ objectFit: 'contain' }}
+            />
+          </Link>
         </div>
         
-        {/* Navigation Menu */}
-        {isAuthenticated && userRole === 'student' ? (
-          // Menu for logged-in students
-          <NavMenu 
-            items={[
-              { label: 'GROUP CLASSES', path: '/groupclasses' },
-              { label: 'ONE ON ONE', path: '/one-on-one' },
-              { label: 'ABOUT US', path: '/about-us' },
-              { label: 'FAQS', path: '/faqs' }
-            ]}
-            isLoggedIn={true}
-          />
-        ) : (
-          // Menu for non-logged-in users
-          <NavMenu 
-            items={[
-              { label: 'GROUP CLASSES', path: '/groupclasses' },
-              { label: 'ABOUT US', path: '/about-us' },
-              { label: 'FAQS', path: '/faqs' }
-            ]}
-            isLoggedIn={false}
-          />
-        )}
+        {/* Navigation Menu - Same for all users */}
+        <NavMenu 
+          items={[
+            { label: 'GROUP CLASSES', path: '/groupclasses' },
+            { label: 'ONE ON ONE', path: '/one-on-one' },
+            { label: 'ABOUT US', path: '/about-us' },
+            { label: 'FAQS', path: '/faqs' }
+          ]}
+          showBookTrial={!isAuthenticated}
+        />
         
         {/* Right side elements container */}
         <div className="absolute right-[30px] top-[20px] flex items-center space-x-4">

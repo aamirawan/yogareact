@@ -41,6 +41,9 @@ export interface EnhancedClass {
   reminder_enabled: boolean;
   reminder_minutes_before: number;
   
+  // Online meeting details
+  meeting_link?: string;
+  
   // Other fields
   created_at: string;
   updated_at: string;
@@ -93,6 +96,9 @@ export interface ClassFormData {
   // Notification settings
   reminder_enabled: boolean;
   reminder_minutes_before: number;
+  
+  // Online meeting details
+  meeting_link?: string;
 }
 
 export interface UpdateOptions {
@@ -153,5 +159,6 @@ export const DEFAULT_CLASS_FORM_DATA: ClassFormData = {
   recurring_days: [],
   recurring_interval: 1,
   reminder_enabled: true,
-  reminder_minutes_before: 30
+  reminder_minutes_before: 30,
+  meeting_link: ''
 };

@@ -55,7 +55,8 @@ const LoginPage: React.FC = () => {
       if (from === '/') {
         switch (data.user.role) {
           case 'student':
-            navigate('/student/classes');
+            //navigate('/student/classes');
+            navigate('/');
             break;
           case 'teacher':
             navigate('/teacher/profile');
@@ -173,7 +174,8 @@ const LoginPage: React.FC = () => {
         setTimeout(() => {
           switch (data.user.role) {
             case 'student':
-              navigate('/student/classes');
+              //navigate('/student/classes');
+              navigate('/');
               break;
             case 'teacher':
               navigate('/teacher/profile');

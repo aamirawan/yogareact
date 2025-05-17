@@ -92,6 +92,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
           <Route path="groupclasses" element={<GroupClasses />} />
+          <Route path="one-on-one" element={<OneOnOneBooking />} />
           {/* Teacher Routes */}
           <Route path="/teacher" element={
             <ProtectedRoute allowedRoles={['teacher']}>

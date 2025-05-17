@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   ClassFormData, 
   EnhancedClass,
@@ -24,6 +24,18 @@ const ClassForm = ({
 }: ClassFormProps) => {
   const [formData, setFormData] = useState<ClassFormData>(DEFAULT_CLASS_FORM_DATA);
   
+  // Effect to update form data when recurring days change
+  useEffect(() => {
+    // If recurring days are selected, ensure is_recurring and recurrence_type are set correctly
+    if (formData.recurring_days.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        is_recurring: true,
+        recurrence_type: 'weekly'
+      }));
+    }
+  }, [formData.recurring_days]);
+  
   // Function to generate time options in 30-minute intervals from 6:00 AM to 10:00 PM
   const generateTimeOptions = () => {
     const options = [];
@@ -46,6 +58,20 @@ const ClassForm = ({
   // Initialize form with data if editing
   useEffect(() => {
     if (initialData) {
+      // Parse recurring_days to ensure it's an array of numbers
+      let recurringDays = [];
+      if (initialData.recurring_days) {
+        if (Array.isArray(initialData.recurring_days)) {
+          recurringDays = initialData.recurring_days;
+        } else if (typeof initialData.recurring_days === 'string') {
+          try {
+            recurringDays = JSON.parse(initialData.recurring_days);
+          } catch (e) {
+            console.error('Error parsing recurring days:', e);
+          }
+        }
+      }
+      
       setFormData({
         title: initialData.title,
         subtitle: initialData.subtitle || '',
@@ -56,12 +82,12 @@ const ClassForm = ({
         start_date: initialData.start_date,
         start_time: initialData.start_time,
         is_recurring: !!initialData.is_recurring,
-        recurrence_type: initialData.recurrence_type,
-        recurring_days: initialData.recurring_days || [],
-        recurring_interval: initialData.recurring_interval,
+        recurrence_type: initialData.recurrence_type || 'none',
+        recurring_days: recurringDays,
+        recurring_interval: initialData.recurring_interval || 1,
         recurring_end_date: initialData.recurring_end_date,
         reminder_enabled: !!initialData.reminder_enabled,
-        reminder_minutes_before: initialData.reminder_minutes_before
+        reminder_minutes_before: initialData.reminder_minutes_before || 30
       });
     }
   }, [initialData]);
@@ -75,6 +101,9 @@ const ClassForm = ({
     } else if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
+    } else if (name === 'start_date') {
+      // When start date changes, update the form data
+      setFormData(prev => ({ ...prev, [name]: value }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -86,7 +115,32 @@ const ClassForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Create a copy of the form data to modify before submission
+    const submissionData = { ...formData };
+    
+    // If this is a single-day class (no recurring days selected)
+    if (!submissionData.is_recurring || submissionData.recurring_days.length === 0) {
+      // Set is_recurring to false and recurrence_type to none
+      submissionData.is_recurring = false;
+      submissionData.recurrence_type = 'none';
+      submissionData.recurring_days = [];
+    } else {
+      // Ensure is_recurring is true and recurrence_type is set to weekly
+      submissionData.is_recurring = true;
+      submissionData.recurrence_type = 'weekly';
+      
+      // Get day of week for the start date (0-6, where 0 is Sunday)
+      const startDate = new Date(submissionData.start_date);
+      const startDayOfWeek = startDate.getDay();
+      
+      // Add the start date's day of week to recurring days if not already included
+      if (!submissionData.recurring_days.includes(startDayOfWeek)) {
+        submissionData.recurring_days = [...submissionData.recurring_days, startDayOfWeek].sort((a, b) => a - b);
+      }
+    }
+    
+    onSubmit(submissionData);
   };
 
   // Determine if we're in edit mode
@@ -242,6 +296,28 @@ const ClassForm = ({
               ))}
             </select>
           </div>
+        </div>
+        
+        {/* Meeting Link field - always show in both create and edit modes */}
+        <div className="md:col-span-2">
+          <label htmlFor="meeting_link" className="block text-sm font-medium text-gray-700 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-indigo-500">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            Meeting Link (Required)
+          </label>
+          <input
+            type="url"
+            id="meeting_link"
+            name="meeting_link"
+            placeholder="https://zoom.us/j/123456789 or other video conferencing link"
+            required
+            value={formData.meeting_link}
+            onChange={handleInputChange}
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          />
+          <p className="mt-1 text-sm text-gray-500">Provide a link to the online meeting (Zoom, Google Meet, etc.)</p>
         </div>
 
         {/* Recurrence section - always show in edit mode */}

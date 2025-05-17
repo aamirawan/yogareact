@@ -204,7 +204,7 @@ const YogaPlansSection = () => {
   const slideWidth = displayPlans.length > 0 ? 100 / displayPlans.length : 33.33;
 
   return (
-    <section className="relative w-full max-w-[1440px] h-[905px] bg-white mx-auto">
+    <section id="yogaPlansSection" className="relative w-full max-w-[1440px] h-[905px] bg-white mx-auto">
       <div className="relative h-full">
         {/* Section Title */}
         <h2 className="absolute w-full text-center top-[133px] font-inter font-medium text-[52px] leading-[76px] text-[#121212]">
