@@ -1,4 +1,5 @@
 // Blog Section component
+// Blog Section component
 import blog1 from '../../assets/images/yogagirl2.jpg';
 import blog2 from '../../assets/images/yogagirl4.jpg';
 import blog3 from '../../assets/images/yogagirl5.jpg';
@@ -6,8 +7,44 @@ import blog4 from '../../assets/images/17.png';
 import blog5 from '../../assets/images/18.jpg';
 
 const BlogSection = () => {
-  // Note: Blog post data is hardcoded in the JSX for this implementation
-  // but could be refactored to use a data array for more dynamic rendering
+  // Blog posts data array for more dynamic rendering
+  const blogPosts = [
+    {
+      id: 1,
+      image: blog1,
+      title: 'Prenatal Care with Yoga',
+      date: 'October 10, 2024',
+      size: 'small'
+    },
+    {
+      id: 2,
+      image: blog2,
+      title: 'Prenatal Care with Yoga',
+      date: 'October 10, 2024',
+      size: 'small'
+    },
+    {
+      id: 3,
+      image: blog3,
+      title: 'Sleepless Nights? How Yoga Can Help You Find Rest and Recharge Your Life',
+      date: 'October 10, 2024',
+      size: 'large'
+    },
+    {
+      id: 4,
+      image: blog4,
+      title: 'Prenatal Care with Yoga',
+      date: 'October 10, 2024',
+      size: 'small'
+    },
+    {
+      id: 5,
+      image: blog5,
+      title: 'Prenatal Care with Yoga',
+      date: 'October 10, 2024',
+      size: 'small'
+    }
+  ];
 
   // Arrow icon component
   const ArrowIcon = () => (
@@ -20,113 +57,172 @@ const BlogSection = () => {
   );
 
   return (
-    <section className="relative w-full h-[1032px] bg-[#121212]">
-      <div className="max-w-[1440px] mx-auto relative h-full">
+    <section className="relative w-full bg-[#121212] py-10 sm:py-12 md:py-16 lg:py-20 xl:py-24">
+      <div className="max-w-[1224px] mx-auto px-4 sm:px-5 md:px-6 lg:px-0">
         {/* Section Title */}
-        <h2 className="absolute w-[379px] h-[55px] left-1/2 -translate-x-1/2 top-[110px] font-inter font-medium text-[52px] leading-[76px] text-center text-white">
+        <h2 className="w-full font-inter font-medium text-[24px] xs:text-[28px] sm:text-[36px] md:text-[42px] lg:text-[52px] leading-[1.2] xs:leading-[1.3] sm:leading-[1.4] md:leading-[1.5] lg:leading-[76px] text-center text-white mb-6 sm:mb-8 md:mb-10 lg:mb-12">
           From the Blog
         </h2>
         
-        {/* Blog Posts Layout */}
-        <div className="absolute top-0 left-0 w-full h-full">
-          {/* Small Post 1 - Top Left */}
-          <div className="absolute w-[306px] h-[248px] left-[101px] top-[241px] rounded-[10px] overflow-hidden">
-            <img 
-              src={blog1} 
-              alt="Prenatal Care with Yoga" 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
-              <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
-                October 10, 2024
-              </span>
-            </div>
-          </div>
-          <div className="absolute left-[101px] top-[509px]">
-            <a href="#" className="flex items-center font-inter font-semibold text-[20px] leading-[31px] text-white">
-              Prenatal Care with Yoga
-              <ArrowIcon />
-            </a>
-          </div>
-          
-          {/* Small Post 2 - Bottom Left */}
-          <div className="absolute w-[306px] h-[248px] left-[101px] top-[591px] rounded-[10px] overflow-hidden">
-            <img 
-              src={blog2} 
-              alt="Prenatal Care with Yoga" 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
-              <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
-                October 10, 2024
-              </span>
-            </div>
-          </div>
-          <div className="absolute left-[101px] top-[859px]">
-            <a href="#" className="flex items-center font-inter font-semibold text-[20px] leading-[31px] text-white">
-              Prenatal Care with Yoga
-              <ArrowIcon />
-            </a>
+        {/* Blog Posts Layout - Grid for larger screens, Stack for mobile */}
+        <div className="w-full">
+          {/* Mobile Layout (Stack) */}
+          <div className="md:hidden flex flex-col space-y-6">
+            {blogPosts.map((post) => (
+              <div key={post.id} className="w-full">
+                <div className="w-full aspect-[306/248] rounded-[10px] overflow-hidden mb-4">
+                  <img 
+                    src={post.image} 
+                    alt={post.title} 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-[10px] left-[10px] bg-[rgba(21,21,21,0.2)] px-[7px] py-[7px] rounded">
+                    <span className="font-inter font-semibold text-[14px] leading-[1.4] text-white">
+                      {post.date}
+                    </span>
+                  </div>
+                </div>
+                <a href="#" className="flex items-center font-inter font-semibold text-[16px] xs:text-[18px] leading-[1.4] text-white">
+                  {post.title}
+                  <ArrowIcon />
+                </a>
+              </div>
+            ))}
           </div>
           
-          {/* Large Post - Center */}
-          <div className="absolute w-[574px] h-[598px] left-[433px] top-[241px] rounded-[10px] overflow-hidden">
-            <img 
-              src={blog3} 
-              alt="Sleepless Nights? How Yoga Can Help You Find Rest and Recharge Your Life" 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
-              <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
-                October 10, 2024
-              </span>
+          {/* Tablet Layout (2 columns) */}
+          <div className="hidden md:block lg:hidden">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6">
+              {blogPosts.map((post) => (
+                <div key={post.id} className="w-full mb-6">
+                  <div className="w-full aspect-[306/248] rounded-[10px] overflow-hidden mb-4">
+                    <img 
+                      src={post.image} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-[15px] left-[15px] bg-[rgba(21,21,21,0.2)] px-[7px] py-[7px] rounded">
+                      <span className="font-inter font-semibold text-[14px] leading-[1.4] text-white">
+                        {post.date}
+                      </span>
+                    </div>
+                  </div>
+                  <a href="#" className="flex items-center font-inter font-semibold text-[18px] leading-[1.4] text-white">
+                    {post.title.length > 40 ? `${post.title.substring(0, 40)}...` : post.title}
+                    <ArrowIcon />
+                  </a>
+                </div>
+              ))}
             </div>
-          </div>
-          <div className="absolute w-[574px] left-[433px] top-[859px]">
-            <a href="#" className="flex items-center font-inter font-semibold text-[20px] leading-[31px] text-white">
-              Sleepless Nights? How Yoga Can Help You Find Rest and Recharge Your Life
-              <ArrowIcon />
-            </a>
           </div>
           
-          {/* Small Post 3 - Top Right */}
-          <div className="absolute w-[306px] h-[248px] left-[1033px] top-[241px] rounded-[10px] overflow-hidden">
-            <img 
-              src={blog4} 
-              alt="Prenatal Care with Yoga" 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
-              <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
-                October 10, 2024
-              </span>
+          {/* Desktop Layout (Complex grid) */}
+          <div className="hidden lg:block">
+            <div className="grid grid-cols-12 gap-4 lg:gap-6">
+              {/* Left Column - Small Posts */}
+              <div className="col-span-3 flex flex-col gap-6">
+                <div className="w-full">
+                  <div className="w-full aspect-[306/248] rounded-[10px] overflow-hidden mb-4">
+                    <img 
+                      src={blog1} 
+                      alt="Prenatal Care with Yoga" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
+                      <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
+                        October 10, 2024
+                      </span>
+                    </div>
+                  </div>
+                  <a href="#" className="flex items-center font-inter font-semibold text-[18px] lg:text-[20px] leading-[1.4] text-white">
+                    Prenatal Care with Yoga
+                    <ArrowIcon />
+                  </a>
+                </div>
+                
+                <div className="w-full">
+                  <div className="w-full aspect-[306/248] rounded-[10px] overflow-hidden mb-4">
+                    <img 
+                      src={blog2} 
+                      alt="Prenatal Care with Yoga" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
+                      <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
+                        October 10, 2024
+                      </span>
+                    </div>
+                  </div>
+                  <a href="#" className="flex items-center font-inter font-semibold text-[18px] lg:text-[20px] leading-[1.4] text-white">
+                    Prenatal Care with Yoga
+                    <ArrowIcon />
+                  </a>
+                </div>
+              </div>
+              
+              {/* Center Column - Large Post */}
+              <div className="col-span-6">
+                <div className="w-full">
+                  <div className="w-full aspect-[574/598] rounded-[10px] overflow-hidden mb-4">
+                    <img 
+                      src={blog3} 
+                      alt="Sleepless Nights? How Yoga Can Help You Find Rest and Recharge Your Life" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
+                      <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
+                        October 10, 2024
+                      </span>
+                    </div>
+                  </div>
+                  <a href="#" className="flex items-center font-inter font-semibold text-[18px] lg:text-[20px] leading-[1.4] text-white">
+                    Sleepless Nights? How Yoga Can Help You Find Rest and Recharge Your Life
+                    <ArrowIcon />
+                  </a>
+                </div>
+              </div>
+              
+              {/* Right Column - Small Posts */}
+              <div className="col-span-3 flex flex-col gap-6">
+                <div className="w-full">
+                  <div className="w-full aspect-[306/248] rounded-[10px] overflow-hidden mb-4">
+                    <img 
+                      src={blog4} 
+                      alt="Prenatal Care with Yoga" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
+                      <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
+                        October 10, 2024
+                      </span>
+                    </div>
+                  </div>
+                  <a href="#" className="flex items-center font-inter font-semibold text-[18px] lg:text-[20px] leading-[1.4] text-white">
+                    Prenatal Care with Yoga
+                    <ArrowIcon />
+                  </a>
+                </div>
+                
+                <div className="w-full">
+                  <div className="w-full aspect-[306/248] rounded-[10px] overflow-hidden mb-4">
+                    <img 
+                      src={blog5} 
+                      alt="Prenatal Care with Yoga" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
+                      <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
+                        October 10, 2024
+                      </span>
+                    </div>
+                  </div>
+                  <a href="#" className="flex items-center font-inter font-semibold text-[18px] lg:text-[20px] leading-[1.4] text-white">
+                    Prenatal Care with Yoga
+                    <ArrowIcon />
+                  </a>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="absolute left-[1033px] top-[509px]">
-            <a href="#" className="flex items-center font-inter font-semibold text-[20px] leading-[31px] text-white">
-              Prenatal Care with Yoga
-              <ArrowIcon />
-            </a>
-          </div>
-          
-          {/* Small Post 4 - Bottom Right */}
-          <div className="absolute w-[306px] h-[248px] left-[1033px] top-[591px] rounded-[10px] overflow-hidden">
-            <img 
-              src={blog5} 
-              alt="Prenatal Care with Yoga" 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-[20px] left-[20px] bg-[rgba(21,21,21,0.2)] px-[7.6px] py-[7.6px] rounded">
-              <span className="font-inter font-semibold text-[15.2px] leading-[24px] text-white">
-                October 10, 2024
-              </span>
-            </div>
-          </div>
-          <div className="absolute left-[1033px] top-[859px]">
-            <a href="#" className="flex items-center font-inter font-semibold text-[20px] leading-[31px] text-white">
-              Prenatal Care with Yoga
-              <ArrowIcon />
-            </a>
           </div>
         </div>
       </div>

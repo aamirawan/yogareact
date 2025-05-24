@@ -2,6 +2,7 @@ import { useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/common/Header2';
 import Footer from './components/common/Footer';
+import SimpleFooter from './components/common/SimpleFooter';
 import { AuthProvider } from './context/AuthContext';
 import ToastProvider from './context/ToastContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -131,13 +132,15 @@ function App() {
               <Route path="blog" element={<BlogPosts />} />
               <Route path="packages" element={<Packages />} />
               <Route path="classes" element={<Classes />} />
-              <Route path="orders" element={<Orders />} />
+              <Route path="orders" element={<ProtectedRoute allowedRoles={['admin']}><Orders /></ProtectedRoute>} />
               <Route path="teachers" element={<Teachers />} />
               <Route path="students" element={<Students />} />
             </Route>
           </Routes>
         </Suspense>
-        {!hideHeaderFooter && <Footer />}
+        {!hideHeaderFooter && (
+          location.pathname === '/' ? <Footer /> : <SimpleFooter />
+        )}
       </div>
       </ToastProvider>
     </AuthProvider>

@@ -28,95 +28,87 @@ const YogaInstructorsSection = () => {
   // but could be refactored to use a data array for more dynamic rendering
 
   return (
-    <section className="relative w-full h-[857px] bg-white">
-      <div className="max-w-[1440px] mx-auto relative h-full">
+    <section className="relative w-full bg-white py-10 sm:py-12 md:py-16 lg:py-20">
+      <div className="max-w-[1224px] mx-auto px-4 sm:px-5 md:px-6 lg:px-0">
         {/* Section Title */}
-        <h2 className="absolute w-[581px] h-[59px] left-1/2 -translate-x-1/2 top-[33px] font-inter font-medium text-[52px] leading-[76px] text-center text-[#121212]">
+        <h2 className="w-full font-inter font-medium text-[24px] xs:text-[28px] sm:text-[36px] md:text-[42px] lg:text-[52px] leading-[1.2] xs:leading-[1.3] sm:leading-[1.4] md:leading-[1.5] lg:leading-[76px] text-center text-[#121212] mb-6 sm:mb-8 md:mb-10 lg:mb-12">
           Authentic Indian Yoga
         </h2>
 
-        {/* Filter Buttons */}
-        <div className="absolute w-[859px] h-[33px] left-[290px] top-[134px] flex gap-[25px]">
-          {filterOptions.map((option, index) => (
-            <button
-              key={option.id}
-              onClick={() => handleFilterClick(option.id)}
-              className={`flex justify-center items-center px-[10.6px] py-[10.6px] w-[122px] h-[33px] border border-[#6D6D6E] rounded-[6px] ${
-                activeFilter === option.id ? 'bg-[#121212] text-white' : 'bg-transparent text-[#6D6D6E]'
-              } transition-colors duration-200 hover:bg-gray-100 hover:text-[#121212] cursor-pointer`}
-            >
-              <span className="font-poppins font-normal text-[16px] leading-[25px]">
-                {option.label}
-              </span>
-            </button>
-          ))}
+        {/* Filter Buttons - Scrollable on mobile */}
+        <div className="w-full overflow-x-auto pb-4 mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+          <div className="flex gap-2 xs:gap-3 sm:gap-4 md:gap-[25px] min-w-max px-3 sm:px-0 sm:justify-center">
+            {filterOptions.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => handleFilterClick(option.id)}
+                className={`flex justify-center items-center px-2 xs:px-3 sm:px-[10.6px] py-1.5 xs:py-2 sm:py-[10.6px] min-w-[80px] xs:min-w-[100px] sm:min-w-[122px] h-[30px] xs:h-[32px] sm:h-[33px] border border-[#6D6D6E] rounded-[6px] ${
+                  activeFilter === option.id ? 'bg-[#121212] text-white' : 'bg-transparent text-[#6D6D6E]'
+                } transition-colors duration-200 hover:bg-gray-100 hover:text-[#121212] cursor-pointer whitespace-nowrap`}
+              >
+                <span className="font-poppins font-normal text-[14px] xs:text-[15px] sm:text-[16px] leading-[1.4] sm:leading-[25px]">
+                  {option.label}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Instructor Cards */}
-        <div className="relative w-full h-full">
+        {/* Instructor Cards - Flex layout for responsiveness */}
+        <div className="flex flex-col md:flex-row gap-6 sm:gap-8 md:gap-4 lg:gap-8 justify-center items-center">
           {/* Card 1 */}
-          <div className="absolute w-[385px] h-[501px] left-[100px] top-[245px] rounded-[10px] overflow-hidden">
+          <div className="w-full xs:w-[85%] sm:w-[70%] md:w-[31%] max-w-[385px] aspect-[385/501] rounded-[10px] overflow-hidden">
             <div className="relative w-full h-full">
               {/* Background Image */}
-              <div className="absolute w-[492px] h-[614px] left-[-52px] top-[-113px] bg-cover bg-center"
+              <div className="absolute w-full h-[120%] left-0 top-[-10%] bg-cover bg-center"
                    style={{ backgroundImage: `url('${instructor1}')` }}>
               </div>
               
               {/* Overlay */}
               <div className="absolute inset-0 bg-[rgba(11,11,11,0.35)]"></div>
               
-              {/* Play Button 
-              <div className="absolute w-[71px] h-[71px] left-[36px] top-[330px] bg-[rgba(88,70,69,0.71)] rounded-full flex items-center justify-center">
-                <div className="absolute w-[33px] h-[33px] bg-[#FF5D76] rounded-[3px] transform rotate-90"></div>
-              </div>*/}
-              
               {/* Divider */}
-              <div className="absolute w-[63px] h-[6px] left-[161px] top-[377px] bg-[#D9D9D9] rounded-[10px]"></div>
+              <div className="absolute w-[15%] h-[6px] left-[42.5%] top-[75%] bg-[#D9D9D9] rounded-[10px]"></div>
               
-              {/* Name - Large */}
-              <h3 className="absolute w-[301px] h-[113px] left-[42px] top-[243px] font-inter font-extrabold text-[53px] leading-[61px] text-center text-white">
+              {/* Name - Large (hidden on small screens) */}
+              <h3 className="absolute w-[78%] left-[11%] top-[48%] font-inter font-extrabold text-[32px] xs:text-[36px] sm:text-[42px] md:text-[48px] lg:text-[53px] leading-[1.15] text-center text-white hidden sm:block">
                 Aishwarya Mondody
               </h3>
               
-              {/* Name - Small */}
-              <p className="absolute w-[389px] h-[31px] left-0 top-[438px] font-inter font-medium text-[24px] leading-[41px] text-center text-white">
+              {/* Name - Small (visible on all screens) */}
+              <p className="absolute w-full left-0 bottom-[8%] font-inter font-medium text-[18px] xs:text-[20px] sm:text-[22px] md:text-[24px] leading-[1.4] text-center text-white">
                 Aishwarya Mondody
               </p>
             </div>
           </div>
           
           {/* Card 2 */}
-          <div className="absolute w-[385px] h-[501px] left-1/2 -translate-x-1/2 top-[245px] rounded-[10px] overflow-hidden">
+          <div className="w-full xs:w-[85%] sm:w-[70%] md:w-[31%] max-w-[385px] aspect-[385/501] rounded-[10px] overflow-hidden">
             <div className="relative w-full h-full">
               {/* Background Image */}
-              <div className="absolute w-[395px] h-[592px] left-0 top-[-57px] bg-cover bg-center"
+              <div className="absolute w-full h-[120%] left-0 top-[-10%] bg-cover bg-center"
                    style={{ 
                      backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('${instructor2}')` 
                    }}>
               </div>
               
-              {/* Play Button */}
-              {/* <div className="absolute w-[71px] h-[71px] left-[36px] top-[330px] bg-[#99928C] rounded-full flex items-center justify-center">
-                <div className="absolute w-[33px] h-[33px] bg-[#FF5D76] rounded-[3px] transform rotate-90"></div>
-              </div> */}
-              
               {/* Divider */}
-              <div className="absolute w-[63px] h-[6px] left-[161px] top-[377px] bg-[#D9D9D9] rounded-[10px]"></div>
+              <div className="absolute w-[15%] h-[6px] left-[42.5%] top-[75%] bg-[#D9D9D9] rounded-[10px]"></div>
               
-              {/* Name - Large */}
-              <h3 className="absolute w-[301px] h-[113px] left-[42px] top-[243px] font-inter font-extrabold text-[53px] leading-[61px] text-center text-white">
+              {/* Name - Large (hidden on small screens) */}
+              <h3 className="absolute w-[78%] left-[11%] top-[48%] font-inter font-extrabold text-[32px] xs:text-[36px] sm:text-[42px] md:text-[48px] lg:text-[53px] leading-[1.15] text-center text-white hidden sm:block">
                 Aishwarya Mondody
               </h3>
               
-              {/* Name - Small */}
-              <p className="absolute w-[389px] h-[31px] left-0 top-[438px] font-inter font-medium text-[24px] leading-[41px] text-center text-white">
+              {/* Name - Small (visible on all screens) */}
+              <p className="absolute w-full left-0 bottom-[8%] font-inter font-medium text-[18px] xs:text-[20px] sm:text-[22px] md:text-[24px] leading-[1.4] text-center text-white">
                 Aishwarya Mondody
               </p>
             </div>
           </div>
           
           {/* Card 3 */}
-          <div className="absolute w-[385px] h-[501px] right-[100px] top-[245px] rounded-[10px] overflow-hidden">
+          <div className="w-full xs:w-[85%] sm:w-[70%] md:w-[31%] max-w-[385px] aspect-[385/501] rounded-[10px] overflow-hidden">
             <div className="relative w-full h-full">
               {/* Background Image */}
               <div className="absolute w-full h-full inset-0 bg-cover bg-center"
@@ -125,21 +117,16 @@ const YogaInstructorsSection = () => {
                    }}>
               </div>
               
-              {/* Play Button */}
-              {/* <div className="absolute w-[71px] h-[71px] left-[36px] top-[330px] bg-[#99928C] rounded-full flex items-center justify-center">
-                <div className="absolute w-[33px] h-[33px] bg-[#FF5D76] rounded-[3px] transform rotate-90"></div>
-              </div> */}
-              
               {/* Divider */}
-              <div className="absolute w-[63px] h-[6px] left-[161px] top-[377px] bg-[#D9D9D9] rounded-[10px]"></div>
+              <div className="absolute w-[15%] h-[6px] left-[42.5%] top-[75%] bg-[#D9D9D9] rounded-[10px]"></div>
               
-              {/* Name - Large */}
-              <h3 className="absolute w-[301px] h-[113px] left-[42px] top-[243px] font-inter font-extrabold text-[53px] leading-[61px] text-center text-white">
+              {/* Name - Large (hidden on small screens) */}
+              <h3 className="absolute w-[78%] left-[11%] top-[48%] font-inter font-extrabold text-[32px] xs:text-[36px] sm:text-[42px] md:text-[48px] lg:text-[53px] leading-[1.15] text-center text-white hidden sm:block">
                 Aishwarya Mondody
               </h3>
               
-              {/* Name - Small */}
-              <p className="absolute w-[389px] h-[31px] left-0 top-[438px] font-inter font-medium text-[24px] leading-[41px] text-center text-white">
+              {/* Name - Small (visible on all screens) */}
+              <p className="absolute w-full left-0 bottom-[8%] font-inter font-medium text-[18px] xs:text-[20px] sm:text-[22px] md:text-[24px] leading-[1.4] text-center text-white">
                 Aishwarya Mondody
               </p>
             </div>

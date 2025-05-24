@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="w-full relative bg-white pt-[50px]">
       {/* Marquee Section at the top */}
-      <div className="absolute w-full left-0 top-0 overflow-hidden bg-[#121212] text-white py-4">
+      <div className="absolute w-full left-0 top-0 overflow-hidden bg-[#121212] text-white py-2">
         <div className="relative">
           <div className="flex whitespace-nowrap animate-marquee">
             <div className="flex items-center text-sm font-medium">
@@ -148,7 +148,7 @@ const Footer = () => {
 
       
       {/* Bottom section with logo and copyright */}
-      <div className="w-full mt-[60px] py-[40px] bg-[#F9FAFA]">
+      <div className="w-full mt-[60px] py-[40px]">
         <div className="mx-auto px-[100px] flex flex-row items-center justify-between">                  
           <p className="text-left text-[14px] text-[#121212] max-w-[430px]">
             <strong>Elevate Yoga By India For The World.<br /></strong>

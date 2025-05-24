@@ -32,7 +32,6 @@ const YogaPlansSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   
   // Fetch packages from the API
   useEffect(() => {
@@ -42,11 +41,8 @@ const YogaPlansSection = () => {
         const response = await publicApi.getSubscriptionPackages();
         if (response.success) {
           setPackages(response.data);
-        } else {
-          setError('Failed to fetch packages');
         }
       } catch (err) {
-        setError('Error connecting to the server');
         console.error('Error fetching packages:', err);
       } finally {
         setLoading(false);
@@ -200,21 +196,21 @@ const YogaPlansSection = () => {
     setCurrentSlide((prev) => (prev === 0 ? displayPlans.length - 1 : prev - 1));
   };
   
-  // Calculate the exact percentage to move for each slide
-  const slideWidth = displayPlans.length > 0 ? 100 / displayPlans.length : 33.33;
+  // On larger screens we'll show multiple slides, but on mobile/tablet we'll show just one
+  // This is handled in the CSS classes and transform style
 
   return (
-    <section id="yogaPlansSection" className="relative w-full max-w-[1440px] h-[905px] bg-white mx-auto">
-      <div className="relative h-full">
+    <section id="yogaPlansSection" className="relative w-full bg-white py-10 sm:py-12 md:py-16 lg:py-20 xl:py-24">
+      <div className="relative max-w-[1224px] mx-auto px-4 sm:px-5 md:px-6 lg:px-0">
         {/* Section Title */}
-        <h2 className="absolute w-full text-center top-[133px] font-inter font-medium text-[52px] leading-[76px] text-[#121212]">
+        <h2 className="w-full text-center font-inter font-medium text-[24px] xs:text-[28px] sm:text-[36px] md:text-[42px] lg:text-[52px] leading-[1.2] xs:leading-[1.3] sm:leading-[1.4] md:leading-[1.5] lg:leading-[76px] text-[#121212] mb-6 sm:mb-8 md:mb-10 lg:mb-14">
           Join <span className="text-[#FF5D76]">#1</span> Interactive Group Yoga Classes
         </h2>
         
         {/* Tab Buttons */}
-        <div className="absolute w-[303px] h-[55px] left-1/2 -translate-x-1/2 top-[240px] flex">
+        <div className="w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[303px] h-[40px] xs:h-[45px] sm:h-[50px] md:h-[55px] mx-auto mb-6 sm:mb-8 md:mb-10 lg:mb-12 flex">
           <button 
-            className={`w-[170px] h-[55px] rounded-l-[10px] font-poppins font-semibold text-[16px] ${activeTab === 'group' ? 'bg-[#121212] text-white' : 'bg-[#E9E9E9] text-[#121212]'}`}
+            className={`w-[60%] h-full rounded-l-[10px] font-poppins font-semibold text-[14px] sm:text-[15px] md:text-[16px] ${activeTab === 'group' ? 'bg-[#121212] text-white' : 'bg-[#E9E9E9] text-[#121212]'}`}
             onClick={() => {
               setActiveTab('group');
               setCurrentSlide(0); // Reset slide position when changing tabs
@@ -223,7 +219,7 @@ const YogaPlansSection = () => {
             Group Classes
           </button>
           <button 
-            className={`w-[133px] h-[55px] rounded-r-[10px] font-poppins font-semibold text-[16px] ${activeTab === 'one-on-one' ? 'bg-[#121212] text-white' : 'bg-[#E9E9E9] text-[#121212]'}`}
+            className={`w-[40%] h-full rounded-r-[10px] font-poppins font-semibold text-[14px] sm:text-[15px] md:text-[16px] ${activeTab === 'one-on-one' ? 'bg-[#121212] text-white' : 'bg-[#E9E9E9] text-[#121212]'}`}
             onClick={() => {
               setActiveTab('one-on-one');
               setCurrentSlide(0); // Reset slide position when changing tabs
@@ -233,109 +229,241 @@ const YogaPlansSection = () => {
           </button>
         </div>
         
-        {/* Plans Carousel */}
-        <div className="absolute w-full top-[358px] flex justify-center">
-          <div className="relative w-full max-w-[1240px] h-[463px] overflow-hidden">
-            {/* Plans Container */}
-            <div 
-              className="flex justify-center transition-transform duration-500 h-full w-full" 
-              style={{ transform: `translateX(-${currentSlide * slideWidth}%)` }}
-            >
-              {displayPlans.map((plan, index) => (
-                <div key={plan.id} className="relative min-w-[33.33%] h-full px-4">
-                  <div className="relative w-[401px] h-[463px] bg-[#121212] border border-[#D1D1D1] rounded-[10px] mx-auto">
-                    {/* Duration */}
-                    <div className="absolute left-[10px] top-[50px] w-[133px] h-[91px] text-center">
-                      <h3 className="font-inter font-bold text-[52px] leading-[54px] text-[#D2D1D1]">
-                        {plan.duration}
-                      </h3>
-                      <p className="font-inter font-bold text-[31px] leading-[32px] text-[#D2D1D1]">
-                        months
-                      </p>
+        {/* Plans Carousel - Different layouts for mobile and desktop */}
+        <div className="w-full">
+          {/* Mobile Layout (Stack with side arrows) - Hidden on large screens */}
+          <div className="lg:hidden w-full relative px-4 xs:px-6 sm:px-8 md:px-10">
+            {/* Mobile Carousel Container */}
+            <div className="relative w-full max-w-[90%] xs:max-w-[85%] mx-auto">
+              {/* Side Navigation Buttons - Mobile */}
+              <div className="absolute top-1/2 -translate-y-1/2 -left-5 xs:-left-7 sm:-left-10 z-10">
+                <button 
+                  onClick={prevSlide}
+                  className="w-[36px] h-[36px] xs:w-[40px] xs:h-[40px] sm:w-[45px] sm:h-[45px] bg-[#E9E9E9] rounded-full flex items-center justify-center shadow-md"
+                  aria-label="Previous plan"
+                >
+                  <svg 
+                    width="10" 
+                    height="10" 
+                    viewBox="0 0 14 14" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="xs:w-[12px] xs:h-[12px]"
+                  >
+                    <path 
+                      d="M7 1L1 7L7 13" 
+                      stroke="#121212" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="absolute top-1/2 -translate-y-1/2 -right-5 xs:-right-7 sm:-right-10 z-10">
+                <button 
+                  onClick={nextSlide}
+                  className="w-[36px] h-[36px] xs:w-[40px] xs:h-[40px] sm:w-[45px] sm:h-[45px] bg-[#E9E9E9] rounded-full flex items-center justify-center shadow-md"
+                  aria-label="Next plan"
+                >
+                  <svg 
+                    width="10" 
+                    height="10" 
+                    viewBox="0 0 14 14" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="transform rotate-180 xs:w-[12px] xs:h-[12px]"
+                  >
+                    <path 
+                      d="M7 1L1 7L7 13" 
+                      stroke="#121212" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Mobile Plans Container */}
+              <div className="overflow-hidden rounded-[15px]">
+                <div 
+                  className="flex transition-transform duration-500 w-full" 
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {displayPlans.map((plan) => (
+                    <div key={plan.id} className="w-full flex-shrink-0">
+                      <div className="w-full bg-[#121212] border border-[#D1D1D1] rounded-[15px] p-6 xs:p-7 sm:p-8">
+                        {/* Duration */}
+                        <div className="mb-4 xs:mb-5 sm:mb-6 text-center">
+                          <h3 className="font-inter font-bold text-[32px] xs:text-[36px] sm:text-[40px] leading-[1.1] text-[#D2D1D1]">
+                            {plan.duration}
+                          </h3>
+                          <p className="font-inter font-bold text-[18px] xs:text-[20px] sm:text-[22px] leading-[1.1] text-[#D2D1D1]">
+                            months
+                          </p>
+                        </div>
+                        
+                        {/* Price */}
+                        <div className="text-center mb-2">
+                          <h4 className="font-inter font-medium text-[24px] xs:text-[26px] sm:text-[28px] leading-[1.2] text-[#FF5D76]">
+                            {plan.price}
+                          </h4>
+                        </div>
+                        
+                        {/* GST and Monthly */}
+                        <div className="text-center mb-6 xs:mb-7 sm:mb-8">
+                          <span className="font-inter font-normal text-[14px] sm:text-[15px] leading-[1.2] text-[#FF5D76] mr-2">
+                            {plan.gst}
+                          </span>
+                          <span className="font-inter font-normal text-[14px] sm:text-[15px] leading-[1.2] text-white">
+                            {plan.monthly}
+                          </span>
+                        </div>
+                        
+                        {/* Benefits */}
+                        <div className="space-y-4 xs:space-y-5 mb-6 xs:mb-7 sm:mb-8 px-2">
+                          {plan.benefits.slice(0, 4).map((benefit, i) => (
+                            <p key={i} className="font-inter font-normal text-[15px] sm:text-[16px] leading-[1.4] text-white text-center">
+                              {benefit}
+                            </p>
+                          ))}
+                        </div>
+                        
+                        {/* Buy Now Button */}
+                        <div className="flex justify-center">
+                          <button className="w-[80%] xs:w-[75%] sm:w-[70%] h-[45px] xs:h-[48px] sm:h-[50px] bg-white border border-[#121212] rounded-[10px] font-poppins font-semibold text-[14px] xs:text-[15px] sm:text-[16px] text-[#121212] hover:bg-gray-100 transition-colors duration-300">
+                            Buy Now
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    
-                    {/* Price */}
-                    <div className="absolute right-[57px] top-[72px]">
-                      <h4 className="font-inter font-medium text-[35px] leading-[12px] text-[#FF5D76]">
-                        {plan.price}
-                      </h4>
-                    </div>
-                    
-                    {/* GST and Monthly */}
-                    <div className="absolute right-[57px] top-[116px] text-right">
-                      <span className="font-inter font-normal text-[14px] leading-[17px] text-[#FF5D76] mr-2">
-                        {plan.gst}
-                      </span>
-                      <span className="font-inter font-normal text-[15px] leading-[17px] text-white">
-                        {plan.monthly}
-                      </span>
-                    </div>
-                    
-                    {/* Benefits */}
-                    <div className="absolute left-[37px] top-[187px] space-y-[28px]">
-                      {plan.benefits.slice(0, 4).map((benefit, i) => (
-                        <p key={i} className="font-inter font-normal text-[16px] leading-[18px] text-white">
-                          {benefit}
-                        </p>
-                      ))}
-                    </div>
-                    
-                    {/* Buy Now Button */}
-                    <button className="absolute left-[108px] bottom-[27px] w-[185px] h-[55px] bg-white border border-[#121212] rounded-[10px] font-poppins font-semibold text-[16px] text-[#121212]">
-                      Buy Now
-                    </button>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+              
+              {/* Mobile Indicator Dots */}
+              <div className="flex justify-center space-x-3 mt-6">
+                {displayPlans.map((_, idx) => (
+                  <button 
+                    key={idx}
+                    onClick={() => setCurrentSlide(idx)} 
+                    className={`h-2.5 rounded-full transition-all duration-300 ${currentSlide === idx ? 'w-8 bg-[#FF5D76]' : 'w-2.5 bg-gray-300'}`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  ></button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-        
-        {/* Navigation Buttons */}
-        <div className="absolute w-full flex justify-between px-20 top-[550px]">
-          <button 
-            onClick={prevSlide}
-            className="w-[49px] h-[49px] bg-[#E9E9E9] rounded-full flex items-center justify-center"
-            aria-label="Previous plan"
-          >
-            <svg 
-              width="14" 
-              height="14" 
-              viewBox="0 0 14 14" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path 
-                d="M7 1L1 7L7 13" 
-                stroke="#121212" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button 
-            onClick={nextSlide}
-            className="w-[49px] h-[49px] bg-[#E9E9E9] rounded-full flex items-center justify-center"
-            aria-label="Next plan"
-          >
-            <svg 
-              width="14" 
-              height="14" 
-              viewBox="0 0 14 14" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-              className="transform rotate-180"
-            >
-              <path 
-                d="M7 1L1 7L7 13" 
-                stroke="#121212" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+          
+          {/* Desktop Layout (Side by Side) - Hidden on small screens */}
+          <div className="hidden lg:block w-full mb-8">
+            <div className="relative w-full max-w-[1224px] mx-auto overflow-hidden px-0">
+              {/* Plans Container for Desktop */}
+              <div 
+                className="flex justify-center transition-transform duration-500 w-full" 
+                style={{ transform: `translateX(-${currentSlide * (100 / 3)}%)` }}
+              >
+                {displayPlans.map((plan) => (
+                  <div key={plan.id} className="w-1/3 px-2">
+                    <div className="w-full h-full bg-[#121212] border border-[#D1D1D1] rounded-[15px] p-8 lg:p-10">
+                      {/* Duration */}
+                      <div className="mb-8 text-left">
+                        <h3 className="font-inter font-bold text-[52px] leading-[1.1] text-[#D2D1D1]">
+                          {plan.duration}
+                        </h3>
+                        <p className="font-inter font-bold text-[31px] leading-[1.1] text-[#D2D1D1]">
+                          months
+                        </p>
+                      </div>
+                      
+                      {/* Price */}
+                      <div className="text-right mb-1">
+                        <h4 className="font-inter font-medium text-[35px] leading-[1.2] text-[#FF5D76]">
+                          {plan.price}
+                        </h4>
+                      </div>
+                      
+                      {/* GST and Monthly */}
+                      <div className="text-right mb-10">
+                        <span className="font-inter font-normal text-[14px] leading-[1.2] text-[#FF5D76] mr-2">
+                          {plan.gst}
+                        </span>
+                        <span className="font-inter font-normal text-[15px] leading-[1.2] text-white">
+                          {plan.monthly}
+                        </span>
+                      </div>
+                      
+                      {/* Benefits */}
+                      <div className="space-y-[28px] mb-10">
+                        {plan.benefits.slice(0, 4).map((benefit, i) => (
+                          <p key={i} className="font-inter font-normal text-[16px] leading-[1.3] text-white">
+                            {benefit}
+                          </p>
+                        ))}
+                      </div>
+                      
+                      {/* Buy Now Button */}
+                      <div className="flex justify-center">
+                        <button className="w-[185px] h-[55px] bg-white border border-[#121212] rounded-[10px] font-poppins font-semibold text-[16px] text-[#121212] hover:bg-gray-100 transition-colors duration-300">
+                          Buy Now
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+            </div>
+            
+            {/* Desktop Navigation Buttons - Positioned outside the carousel */}
+            <div className="w-full flex justify-between absolute top-[65%] -translate-y-1/2" style={{ width: 'calc(100% + 120px)', left: '-60px' }}>
+              <button 
+                onClick={prevSlide}
+                className="w-[49px] h-[49px] bg-[#E9E9E9] rounded-full flex items-center justify-center shadow-md"
+                aria-label="Previous plan"
+              >
+                <svg 
+                  width="14" 
+                  height="14" 
+                  viewBox="0 0 14 14" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path 
+                    d="M7 1L1 7L7 13" 
+                    stroke="#121212" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              <button 
+                onClick={nextSlide}
+                className="w-[49px] h-[49px] bg-[#E9E9E9] rounded-full flex items-center justify-center shadow-md"
+                aria-label="Next plan"
+              >
+                <svg 
+                  width="14" 
+                  height="14" 
+                  viewBox="0 0 14 14" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="transform rotate-180"
+                >
+                  <path 
+                    d="M7 1L1 7L7 13" 
+                    stroke="#121212" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -29,27 +29,27 @@ const FaqSection = () => {
   };
 
   return (
-    <section className="relative w-full h-[711px] bg-white">
-      <div className="max-w-[1440px] mx-auto relative h-full">
+    <section className="relative w-full bg-white py-12 sm:py-16 md:py-20 lg:py-24">
+      <div className="max-w-[1224px] mx-auto px-4 sm:px-5 md:px-6 lg:px-0">
         {/* Section Title */}
-        <h2 className="absolute w-[893px] h-[74px] left-1/2 -translate-x-1/2 top-[164px] font-inter font-medium text-[52px] leading-[76px] text-center text-[#121212]">
+        <h2 className="font-inter font-medium text-[28px] sm:text-[36px] md:text-[42px] lg:text-[52px] leading-[1.2] sm:leading-[1.3] md:leading-[1.4] lg:leading-[76px] text-center text-[#121212] mb-8 sm:mb-10 md:mb-12 lg:mb-16">
           Got Questions? We've Got Answers
         </h2>
         
         {/* FAQ Accordion */}
-        <div className="absolute w-[1073px] left-[183px] top-[271px]">
+        <div className="w-full mx-auto">
           {faqs.map((faq) => (
-            <div key={faq.id} className="mb-[40px]">
+            <div key={faq.id} className="mb-4 sm:mb-6 md:mb-8 lg:mb-[40px]">
               {/* FAQ Question */}
               <div 
                 className={`relative w-full ${openFaq === faq.id ? 'rounded-t-[10px]' : 'rounded-[10px]'} border border-[#B6B6B6] bg-white cursor-pointer`}
                 onClick={() => toggleFaq(faq.id)}
               >
-                <div className="flex justify-between items-center p-[20px]">
-                  <h3 className="font-inter font-semibold text-[18px] leading-[22px] text-[#121212]">
+                <div className="flex justify-between items-center p-3 sm:p-4 md:p-[20px]">
+                  <h3 className="font-inter font-semibold text-[16px] sm:text-[17px] md:text-[18px] leading-[1.3] sm:leading-[22px] text-[#121212] pr-4">
                     {faq.question}
                   </h3>
-                  <div className={`w-[11px] h-[6px] transition-transform duration-300 ${openFaq === faq.id ? 'rotate-180' : ''}`}>
+                  <div className={`flex-shrink-0 w-[10px] sm:w-[11px] h-[5px] sm:h-[6px] transition-transform duration-300 ${openFaq === faq.id ? 'rotate-180' : ''}`}>
                     <svg width="11" height="6" viewBox="0 0 11 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M1 1L5.5 5L10 1" stroke="#B6B6B6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -59,8 +59,8 @@ const FaqSection = () => {
               
               {/* FAQ Answer */}
               {openFaq === faq.id && (
-                <div className="w-full p-[20px] pt-0 bg-white border border-t-0 border-[#B6B6B6] rounded-b-[10px]">
-                  <p className="font-inter font-normal text-[16px] leading-[131.59%] text-[#121212]">
+                <div className="w-full p-3 sm:p-4 md:p-[20px] pt-0 bg-white border border-t-0 border-[#B6B6B6] rounded-b-[10px]">
+                  <p className="font-inter font-normal text-[14px] sm:text-[15px] md:text-[16px] leading-[1.4] sm:leading-[131.59%] text-[#121212]">
                     {faq.answer}
                   </p>
                 </div>
