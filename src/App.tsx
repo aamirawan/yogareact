@@ -5,6 +5,8 @@ import Footer from './components/common/Footer';
 import SimpleFooter from './components/common/SimpleFooter';
 import { AuthProvider } from './context/AuthContext';
 import ToastProvider from './context/ToastContext';
+import { QuestionnaireProvider } from './context/QuestionnaireContext';
+import QuestionnairePopupContainer from './components/common/QuestionnairePopupContainer';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 // Loading component for Suspense fallback
@@ -36,6 +38,7 @@ const GroupClasses = lazy(() => import('./components/student/GroupClasses'));
 const Subscription = lazy(() => import('./components/student/Subscription'));
 const TeacherReviews = lazy(() => import('./components/student/TeacherReviews'));
 const OneOnOneBooking = lazy(() => import('./components/student/OneOnOneBooking'));
+const QuestionnairePage = lazy(() => import('./components/questionnaire/QuestionnairePage'));
 
 // Admin components
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
@@ -82,18 +85,21 @@ function App() {
   
   return (
     <AuthProvider>
-      <ToastProvider>
-        <div className="min-h-screen">
-        {!hideHeaderFooter && <Header />}
-        <Suspense fallback={<LoadingSpinner />}>
-          <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/account/register" element={<Register />} />
-          <Route path="/account/login" element={<Login />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="groupclasses" element={<GroupClasses />} />
-          <Route path="one-on-one" element={<OneOnOneBooking />} />
+      <QuestionnaireProvider>
+        <ToastProvider>
+          <div className="min-h-screen">
+          {!hideHeaderFooter && <Header />}
+          <QuestionnairePopupContainer />
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/account/register" element={<Register />} />
+            <Route path="/account/login" element={<Login />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="*" element={<NotFound />} />
+            <Route path="groupclasses" element={<GroupClasses />} />
+            <Route path="one-on-one" element={<OneOnOneBooking />} />
+            <Route path="/questionnaire" element={<QuestionnairePage />} />
           {/* Teacher Routes */}
           <Route path="/teacher" element={
             <ProtectedRoute allowedRoles={['teacher']}>
@@ -136,13 +142,14 @@ function App() {
               <Route path="teachers" element={<Teachers />} />
               <Route path="students" element={<Students />} />
             </Route>
-          </Routes>
-        </Suspense>
-        {!hideHeaderFooter && (
-          location.pathname === '/' ? <Footer /> : <SimpleFooter />
-        )}
-      </div>
-      </ToastProvider>
+            </Routes>
+          </Suspense>
+          {!hideHeaderFooter && (
+            location.pathname === '/' ? <Footer /> : <SimpleFooter />
+          )}
+        </div>
+        </ToastProvider>
+      </QuestionnaireProvider>
     </AuthProvider>
   );
 }

@@ -1,5 +1,5 @@
 // Blog Section component
-// Blog Section component
+import { useState, useRef } from 'react';
 import blog1 from '../../assets/images/yogagirl2.jpg';
 import blog2 from '../../assets/images/yogagirl4.jpg';
 import blog3 from '../../assets/images/yogagirl5.jpg';
@@ -7,6 +7,47 @@ import blog4 from '../../assets/images/17.png';
 import blog5 from '../../assets/images/18.jpg';
 
 const BlogSection = () => {
+  // State for mobile slider
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  
+  // Handle touch events for mobile swiping
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    // Only process the touch if it's a significant movement
+    if (Math.abs(touchStart - touchEnd) > 75) {
+      if (touchStart - touchEnd > 75) {
+        // Swiped left - go to next slide
+        nextSlide();
+      } else if (touchEnd - touchStart > 75) {
+        // Swiped right - go to previous slide
+        prevSlide();
+      }
+    }
+  };
+
+  // Explicitly define the next and previous slide functions to ensure they work correctly
+  const nextSlide = () => {
+    // Use a direct state update to avoid any potential issues with batched updates
+    const newIndex = currentSlide === blogPosts.length - 1 ? 0 : currentSlide + 1;
+    setCurrentSlide(newIndex);
+  };
+
+  const prevSlide = () => {
+    // Use a direct state update to avoid any potential issues with batched updates
+    const newIndex = currentSlide === 0 ? blogPosts.length - 1 : currentSlide - 1;
+    setCurrentSlide(newIndex);
+  };
+  
   // Blog posts data array for more dynamic rendering
   const blogPosts = [
     {
@@ -66,28 +107,73 @@ const BlogSection = () => {
         
         {/* Blog Posts Layout - Grid for larger screens, Stack for mobile */}
         <div className="w-full">
-          {/* Mobile Layout (Stack) */}
-          <div className="md:hidden flex flex-col space-y-6">
-            {blogPosts.map((post) => (
-              <div key={post.id} className="w-full">
-                <div className="w-full aspect-[306/248] rounded-[10px] overflow-hidden mb-4">
+          {/* Mobile Layout (Slider) */}
+          <div className="md:hidden relative">
+            {/* Slider container */}
+            <div 
+              ref={sliderRef}
+              className="relative overflow-hidden"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              {/* Current slide */}
+              <div className="w-full px-2">
+                <div className="w-full aspect-[306/248] rounded-[10px] overflow-hidden mb-4 relative">
                   <img 
-                    src={post.image} 
-                    alt={post.title} 
+                    src={blogPosts[currentSlide].image} 
+                    alt={blogPosts[currentSlide].title} 
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-[10px] left-[10px] bg-[rgba(21,21,21,0.2)] px-[7px] py-[7px] rounded">
                     <span className="font-inter font-semibold text-[14px] leading-[1.4] text-white">
-                      {post.date}
+                      {blogPosts[currentSlide].date}
                     </span>
                   </div>
                 </div>
                 <a href="#" className="flex items-center font-inter font-semibold text-[16px] xs:text-[18px] leading-[1.4] text-white">
-                  {post.title}
+                  {blogPosts[currentSlide].title}
                   <ArrowIcon />
                 </a>
               </div>
-            ))}
+              
+              {/* Slider Navigation */}
+              <div className="flex justify-between items-center absolute top-1/3 left-0 right-0 transform -translate-y-1/2 px-1">
+                <button 
+                  onClick={() => prevSlide()}
+                  className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-md z-10"
+                  aria-label="Previous slide"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.5 9.5L4 6L7.5 2.5" stroke="#121212" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                
+                <button 
+                  onClick={() => nextSlide()}
+                  className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center shadow-md z-10"
+                  aria-label="Next slide"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.5 2.5L8 6L4.5 9.5" stroke="#121212" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            {/* Slide Indicators */}
+            <div className="flex justify-center items-center gap-2 mt-4 mb-6">
+              {blogPosts.map((_, index) => (
+                <button 
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    currentSlide === index ? 'bg-white w-4' : 'bg-gray-500'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
           
           {/* Tablet Layout (2 columns) */}

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import session1 from '../../assets/images/one_session.png';
 import session2 from '../../assets/images/one_session_2.png';
 import session3 from '../../assets/images/one_session_3.png';
@@ -7,7 +7,24 @@ const YogaSessionsSection = () => {
   const [currentSlide, setCurrentSlide] = useState(1); // Start with middle slide active
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
+  
+  // Check if viewport is mobile size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint in Tailwind
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Session data
   const sessions = [
@@ -79,7 +96,7 @@ const YogaSessionsSection = () => {
           {/* Slider Track */}
           <div 
             ref={sliderRef}
-            className="flex items-center justify-center h-[500px] relative px-6"
+            className="flex items-center justify-center h-[300px] xs:h-[350px] sm:h-[400px] md:h-[500px] relative px-2 xs:px-4 sm:px-6"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -88,11 +105,12 @@ const YogaSessionsSection = () => {
             <div 
               className="absolute overflow-hidden transition-all duration-500 ease-in-out opacity-70 z-10"
               style={{
-                width: '948px',
+                width: isMobile ? '90%' : '948px',
                 height: 'auto',
-                left: '200px',
-                transform: 'translateX(-75%)',
-                borderRadius: '16px'
+                left: isMobile ? '10%' : '200px',
+                transform: isMobile ? 'translateX(-95%)' : 'translateX(-75%)',
+                borderRadius: '16px',
+                display: isMobile ? 'none' : 'block' // Hide on mobile to simplify view
               }}
             >
               <img 
@@ -115,7 +133,8 @@ const YogaSessionsSection = () => {
             <div 
               className="absolute overflow-hidden transition-all duration-500 ease-in-out z-20"
               style={{
-                width: '948px',
+                width: isMobile ? '90%' : '948px',
+                maxWidth: '948px',
                 height: 'auto',
                 left: '50%',
                 transform: 'translateX(-50%)',
@@ -130,7 +149,7 @@ const YogaSessionsSection = () => {
                 className="w-full h-full object-cover"
               />
               
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-white">
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-3 xs:p-4 sm:p-6 text-white">
                 <h3 className="font-inter font-medium text-[22px] md:text-[28px] mb-2 text-center">
                   {sessions[currentSlide].title}
                 </h3>
@@ -144,11 +163,12 @@ const YogaSessionsSection = () => {
             <div 
               className="absolute overflow-hidden transition-all duration-500 ease-in-out opacity-70 z-10"
               style={{
-                width: '948px',
+                width: isMobile ? '90%' : '948px',
                 height: 'auto',
-                right: '200px',
-                transform: 'translateX(75%)',
-                borderRadius: '16px'
+                right: isMobile ? '10%' : '200px',
+                transform: isMobile ? 'translateX(95%)' : 'translateX(75%)',
+                borderRadius: '16px',
+                display: isMobile ? 'none' : 'block' // Hide on mobile to simplify view
               }}
             >
               <img 
@@ -170,10 +190,10 @@ const YogaSessionsSection = () => {
         </div>
         
         {/* Navigation Buttons */}
-        <div className="flex justify-center mt-8 space-x-6 relative z-30">
+        <div className="flex justify-center mt-4 xs:mt-6 sm:mt-8 space-x-3 xs:space-x-4 sm:space-x-6 relative z-30">
           <button 
             onClick={prevSlide}
-            className="w-14 h-14 rounded-full bg-white flex items-center justify-center hover:bg-opacity-30 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+            className="w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center hover:bg-opacity-30 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
             aria-label="Previous slide"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -182,7 +202,7 @@ const YogaSessionsSection = () => {
           </button>
           <button 
             onClick={nextSlide}
-            className="w-14 h-14 rounded-full bg-white flex items-center justify-center hover:bg-opacity-30 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+            className="w-10 h-10 xs:w-12 xs:h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center hover:bg-opacity-30 transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
             aria-label="Next slide"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

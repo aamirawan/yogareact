@@ -56,7 +56,7 @@ const LoginPage: React.FC = () => {
         switch (data.user.role) {
           case 'student':
             //navigate('/student/classes');
-            navigate('/');
+            navigate('/groupclasses');
             break;
           case 'teacher':
             navigate('/teacher/profile');

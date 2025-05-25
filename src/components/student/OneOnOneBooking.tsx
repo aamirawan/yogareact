@@ -129,19 +129,8 @@ const OneOnOneBooking = () => {
   const [activeMonth, setActiveMonth] = useState<Date>(new Date());
   const [displayedTeachers, setDisplayedTeachers] = useState<Teacher[]>([]);
   const [showAllTeachers, setShowAllTeachers] = useState(false);
-  // We don't need visibleTimeSlots anymore as we're using allTimeSlots with timeSlotIndex
-  const [timeSlotIndex, setTimeSlotIndex] = useState(0);
-  const timeSlotDisplayCount = 5;
-  
-  // Generate all time slots for the day with half-hour intervals
-  const allTimeSlots = [
-    '12:00 AM', '12:30 AM', '1:00 AM', '1:30 AM', '2:00 AM', '2:30 AM', '3:00 AM', '3:30 AM', 
-    '4:00 AM', '4:30 AM', '5:00 AM', '5:30 AM', '6:00 AM', '6:30 AM', '7:00 AM', '7:30 AM', 
-    '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-    '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', 
-    '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', 
-    '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM'
-  ];
+  // Store available time slots for the selected date
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
 
   // Fetch teachers when component mounts
   useEffect(() => {
@@ -179,21 +168,7 @@ const OneOnOneBooking = () => {
       
       if (slotsForDate.length > 0) {
         setSelectedSlot(slotsForDate[0]);
-        
-        // Convert API time format to display format for finding index
-        const apiTime = slotsForDate[0].start_time;
-        let [hours, minutes] = apiTime.split(':');
-        let hour = parseInt(hours, 10);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        hour = hour % 12;
-        hour = hour ? hour : 12; // Convert 0 to 12
-        const formattedTime = `${hour}:${minutes.substring(0, 2)} ${ampm}`;
-        
-        // Find the index of the time slot in allTimeSlots
-        const timeSlotIndex = allTimeSlots.findIndex(time => time === formattedTime);
-        if (timeSlotIndex >= 0) {
-          setTimeSlotIndex(Math.max(0, Math.min(timeSlotIndex, allTimeSlots.length - timeSlotDisplayCount)));
-        }
+        setAvailableTimeSlots(slotsForDate);
       }
     }
   }, [timeSlots]);
@@ -373,15 +348,12 @@ const OneOnOneBooking = () => {
         return isSameDay(slotDate, value);
       });
       
+      // Update available time slots for the selected date
+      setAvailableTimeSlots(slotsForDate);
+      
       // Auto-select the first time slot for this date
       if (slotsForDate.length > 0) {
         setSelectedSlot(slotsForDate[0]);
-        
-        // Find the index of the time slot in allTimeSlots
-        const timeSlotIndex = allTimeSlots.findIndex(time => time === slotsForDate[0].start_time);
-        if (timeSlotIndex >= 0) {
-          setTimeSlotIndex(Math.max(0, Math.min(timeSlotIndex, allTimeSlots.length - timeSlotDisplayCount)));
-        }
       } else {
         setSelectedSlot(null);
       }
@@ -409,17 +381,14 @@ const OneOnOneBooking = () => {
     setActiveMonth(nextMonth);
   };
   
-  // Handle time slot navigation
-  
-  const handlePrevTimeSlot = () => {
-    const newIndex = Math.max(0, timeSlotIndex - 1);
-    setTimeSlotIndex(newIndex);
-  };
-  
-  const handleNextTimeSlot = () => {
-    const maxStartIndex = Math.max(0, allTimeSlots.length - timeSlotDisplayCount);
-    const newIndex = Math.min(maxStartIndex, timeSlotIndex + 1);
-    setTimeSlotIndex(newIndex);
+  // Helper function to format time for display
+  const formatTimeForDisplay = (timeString: string) => {
+    let [hours, minutes] = timeString.split(':');
+    let hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    hour = hour ? hour : 12; // Convert 0 to 12
+    return `${hour}:${minutes.substring(0, 2)} ${ampm}`;
   };
 
   // Handle view all teachers toggle
@@ -467,74 +436,188 @@ const OneOnOneBooking = () => {
         )}
         
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Column - Teacher Cards */}
+          {/* Teacher Cards */}
           <div className="lg:w-1/2">
-            {/* Teacher Cards */}
             <div className="mb-6">
               {displayedTeachers.map((teacher) => (
-                <div
-                  key={`teacher-${teacher.id}`}
-                  className={`rounded-[12px] p-4 mb-4 cursor-pointer transition-all ${selectedTeacher?.id === teacher.id 
-                    ? 'bg-black border-2' 
-                    : 'bg-white border border-gray-200 shadow-sm hover:shadow-md'}`}
-                  onClick={() => handleTeacherSelect(teacher)}
-                >
-                  <div className="flex items-center">
-                    <div className="w-[130px] h-[140px] rounded-[15.2px] overflow-hidden bg-[#99928C] relative mr-4">
-                      <img
-                        src={teacher.profile_photo || 'https://via.placeholder.com/150'}
-                        alt={`${teacher.first_name} ${teacher.last_name}`}
-                        className="w-full h-full object-cover"
-                      />        
-                    </div>
-                    <div>
-                      <h3 className={`font-semibold text-[20px] mb-1 ${selectedTeacher?.id === teacher.id ? 'text-white' : 'text-black'}`}>
-                        {teacher.first_name} {teacher.last_name}
-                      </h3>
-                      
-                      <div className="flex space-x-2 mb-2">
-                        <div className={`rounded-[8px] px-[10px] py-[4px] text-xs ${selectedTeacher?.id === teacher.id 
-                          ? 'bg-[#1A1A1A] border border-[#333333] text-white' 
-                          : 'bg-gray-100 text-gray-700'}`}>
-                          <span>PCOS/PCOD</span>
-                        </div>
-                        <div className={`rounded-[8px] px-[10px] py-[4px] text-xs ${selectedTeacher?.id === teacher.id 
-                          ? 'bg-[#1A1A1A] border border-[#333333] text-white' 
-                          : 'bg-gray-100 text-gray-700'}`}>
-                          <span>Weight Loss</span>
-                        </div>
+                <div key={`teacher-${teacher.id}`} className="mb-4">
+                  {/* Teacher Card */}
+                  <div
+                    className={`rounded-[12px] p-4 cursor-pointer transition-all ${selectedTeacher?.id === teacher.id 
+                      ? 'bg-black border-2' 
+                      : 'bg-white border border-gray-200 shadow-sm hover:shadow-md'}`}
+                    onClick={() => handleTeacherSelect(teacher)}
+                  >
+                    <div className="flex items-center">
+                      <div className="w-[130px] h-[140px] rounded-[15.2px] overflow-hidden bg-[#99928C] relative mr-4">
+                        <img
+                          src={teacher.profile_photo || 'https://via.placeholder.com/150'}
+                          alt={`${teacher.first_name} ${teacher.last_name}`}
+                          className="w-full h-full object-cover"
+                        />        
                       </div>
-                      
-                      {/* Star rating */}
-                      <div className="flex items-center">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <div key={star} className="mr-1">
-                            {star <= 4 ? (
-                              <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13.1853 0.36499L16.0851 9.28957H25.4689L17.8772 14.8053L20.777 23.7298L13.1853 18.2141L5.5936 23.7298L8.49337 14.8053L0.901674 9.28957H10.2855L13.1853 0.36499Z" fill="#F49F0C"/>
-                              </svg>
-                            ) : (
-                              <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12.5374 0.36499L15.4371 9.28957H24.821L17.2293 14.8053L20.129 23.7298L12.5374 18.2141L4.94565 23.7298L7.84542 14.8053L0.253725 9.28957H9.63758L12.5374 0.36499Z" fill="#BABABA"/>
-                              </svg>
-                            )}
+                      <div>
+                        <h3 className={`font-semibold text-[20px] mb-1 ${selectedTeacher?.id === teacher.id ? 'text-white' : 'text-black'}`}>
+                          {teacher.first_name} {teacher.last_name}
+                        </h3>
+                        
+                        <div className="flex space-x-2 mb-2">
+                          <div className={`rounded-[8px] px-[10px] py-[4px] text-xs ${selectedTeacher?.id === teacher.id 
+                            ? 'bg-[#1A1A1A] border border-[#333333] text-white' 
+                            : 'bg-gray-100 text-gray-700'}`}>
+                            <span>PCOS/PCOD</span>
                           </div>
-                        ))}
-                        <span className={`ml-2 text-sm font-medium ${selectedTeacher?.id === teacher.id ? 'text-white' : 'text-gray-700'}`}>
-                          4.8
-                        </span>
+                          <div className={`rounded-[8px] px-[10px] py-[4px] text-xs ${selectedTeacher?.id === teacher.id 
+                            ? 'bg-[#1A1A1A] border border-[#333333] text-white' 
+                            : 'bg-gray-100 text-gray-700'}`}>
+                            <span>Weight Loss</span>
+                          </div>
+                        </div>
+                        
+                        {/* Star rating */}
+                        <div className="flex items-center">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <div key={star} className="mr-1">
+                              {star <= 4 ? (
+                                <svg width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M13.1853 0.36499L16.0851 9.28957H25.4689L17.8772 14.8053L20.777 23.7298L13.1853 18.2141L5.5936 23.7298L8.49337 14.8053L0.901674 9.28957H10.2855L13.1853 0.36499Z" fill="#F49F0C"/>
+                                </svg>
+                              ) : (
+                                <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M12.5374 0.36499L15.4371 9.28957H24.821L17.2293 14.8053L20.129 23.7298L12.5374 18.2141L4.94565 23.7298L7.84542 14.8053L0.253725 9.28957H9.63758L12.5374 0.36499Z" fill="#BABABA"/>
+                                </svg>
+                              )}
+                            </div>
+                          ))}
+                          <span className={`ml-2 text-sm font-medium ${selectedTeacher?.id === teacher.id ? 'text-white' : 'text-gray-700'}`}>
+                            4.8
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="ml-auto">
-                      <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9.16455 17.6154L17.2819 9.49805M17.2819 9.49805H9.16455M17.2819 9.49805V17.6154" 
-                          stroke={selectedTeacher?.id === teacher.id ? "#FFFFFF" : "#121212"} 
-                          strokeWidth="1.62348" 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round"/>
-                      </svg>
+                      <div className="ml-auto">
+                        <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9.16455 17.6154L17.2819 9.49805M17.2819 9.49805H9.16455M17.2819 9.49805V17.6154" 
+                            stroke={selectedTeacher?.id === teacher.id ? "#FFFFFF" : "#121212"} 
+                            strokeWidth="1.62348" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round"/>
+                        </svg>
+                      </div>
                     </div>
                   </div>
+                  
+                  {/* Calendar and Time Slots - Shown directly under the selected teacher on mobile */}
+                  {selectedTeacher?.id === teacher.id && (
+                    <div className="block lg:hidden mt-4 border border-gray-200 rounded-lg p-4 bg-white">
+                      {/* Calendar header with select date and arrows */}
+                      <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center">
+                          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="4" width="18" height="18" rx="2" stroke="#000000" strokeWidth="2"/>
+                            <path d="M3 10H21" stroke="#000000" strokeWidth="2"/>
+                            <path d="M8 2L8 6" stroke="#000000" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M16 2L16 6" stroke="#000000" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                          <h3 className="text-base font-medium font-['Inter']">Select Date</h3>
+                        </div>
+                        <div className="flex items-center">
+                          <button 
+                            className="p-1 hover:bg-gray-100 rounded-full" 
+                            aria-label="Previous month"
+                            onClick={handlePrevMonth}
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+                          <button 
+                            className="p-1 hover:bg-gray-100 rounded-full ml-2" 
+                            aria-label="Next month"
+                            onClick={handleNextMonth}
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Calendar Section */}
+                      <div className="rounded-lg">
+                        <div className="text-xl font-bold mb-4 font-['Inter']">
+                          {format(activeMonth, 'MMMM yyyy')}
+                        </div>
+                        
+                        <Calendar
+                          onChange={handleDateChange}
+                          value={selectedDate}
+                          minDate={new Date()}
+                          tileClassName={tileClassName}
+                          tileDisabled={tileDisabled}
+                          className="w-full border-none"
+                          formatDay={(_, date) => format(date, 'd')}
+                          activeStartDate={activeMonth}
+                          formatShortWeekday={(locale, date) => format(date, 'EEE').substring(0, 2)}
+                        />
+                      </div>
+
+                      {/* Time Slots */}
+                      <div className="mt-6">
+                        {/* Time slot selection */}
+                        <div className="mb-4">
+                          <div className="flex flex-wrap gap-2 justify-center">
+                            {selectedDate ? (
+                              availableTimeSlots.length > 0 ? (
+                                availableTimeSlots.map((slot) => {
+                                  const formattedTime = formatTimeForDisplay(slot.start_time);
+                                  const isSelected = selectedSlot?.id === slot.id;
+                                  
+                                  return (
+                                    <button
+                                      key={`time-mobile-${slot.id}`}
+                                      onClick={() => setSelectedSlot(slot)}
+                                      className={`px-4 py-2 rounded-[8px] text-center transition-all min-w-[120px] font-['Inter'] ${
+                                        isSelected
+                                          ? 'bg-[#000] text-white font-medium'
+                                          : 'border-2 border-black hover:bg-gray-50 text-black font-medium'
+                                      }`}
+                                    >
+                                      {formattedTime}
+                                    </button>
+                                  );
+                                })
+                              ) : (
+                                <div className="text-center text-gray-500 py-2 px-4 w-full">
+                                  No available slots for this date
+                                </div>
+                              )
+                            ) : (
+                              <div className="text-center text-gray-500 py-2 px-4 w-full">
+                                Select a date to view available slots
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        {/* Book button - always visible if a date is selected */}
+                        {selectedDate && (
+                          <div className="mt-6">
+                            <button
+                              onClick={handleBookSession}
+                              className="w-full py-3 bg-[#E32552] text-white rounded-[8px] font-medium text-base hover:bg-[#d01e4a] transition-colors font-['Inter']"
+                              disabled={!selectedSlot || isLoading}
+                            >
+                              {isLoading ? (
+                                <div className="flex items-center justify-center">
+                                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                  Processing...
+                                </div>
+                              ) : isAuthenticated ? (
+                                'Book your Slot'
+                              ) : (
+                                'Login to Book'
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
               
@@ -544,14 +627,14 @@ const OneOnOneBooking = () => {
                   className="text-black underline text-sm font-medium"
                   onClick={toggleViewAllTeachers}
                 >
-                  View All Teachers
+                  {showAllTeachers ? 'Show Less' : 'View All Teachers'}
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Right Column - Calendar and Time Slots */}
-          <div className="lg:w-1/2">
+          {/* Calendar and Time Slots - Desktop View (always visible) */}
+          <div className="hidden lg:block lg:w-1/2">
             {selectedTeacher && (
               <div>
                 {/* Calendar header with select date and arrows - outside the calendar */}
@@ -604,84 +687,39 @@ const OneOnOneBooking = () => {
 
                 {/* Time Slots */}
                 <div className="p-4 rounded-lg mt-6">
-                  {/* Time slot selection with slider */}
+                  {/* Time slot selection */}
                   <div className="mb-4">
-                    <div className="flex items-center justify-between">
-                      <button 
-                        className="p-2 focus:outline-none" 
-                        onClick={handlePrevTimeSlot}
-                        disabled={timeSlotIndex === 0}
-                      >
-                        <ChevronLeft className="w-5 h-5" />
-                      </button>
-                      
-                      <div className="flex space-x-2 overflow-hidden">
-                        {selectedDate ? (
-                          allTimeSlots.map((time) => {
-                            // Check if this time is available in the actual time slots
-                            // Convert API time format (HH:MM:SS) to display format (H:MM AM/PM)
-                            const matchingSlot = timeSlots.find(slot => {
-                              const slotDate = new Date(slot.session_date);
-                              
-                              // Convert the API time format to the display format
-                              const apiTime = slot.start_time;
-                              let [hours, minutes] = apiTime.split(':');
-                              let hour = parseInt(hours, 10);
-                              const ampm = hour >= 12 ? 'PM' : 'AM';
-                              hour = hour % 12;
-                              hour = hour ? hour : 12; // Convert 0 to 12
-                              const formattedTime = `${hour}:${minutes.substring(0, 2)} ${ampm}`;
-                              
-                              return isSameDay(slotDate, selectedDate) && formattedTime === time;
-                            });
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {selectedDate ? (
+                        availableTimeSlots.length > 0 ? (
+                          availableTimeSlots.map((slot) => {
+                            const formattedTime = formatTimeForDisplay(slot.start_time);
+                            const isSelected = selectedSlot?.id === slot.id;
                             
-                            // Check if this is the selected slot
-                            let isSelected = false;
-                            if (selectedSlot) {
-                              // Convert the selected slot time to display format
-                              const apiTime = selectedSlot.start_time;
-                              let [hours, minutes] = apiTime.split(':');
-                              let hour = parseInt(hours, 10);
-                              const ampm = hour >= 12 ? 'PM' : 'AM';
-                              hour = hour % 12;
-                              hour = hour ? hour : 12; // Convert 0 to 12
-                              const formattedTime = `${hour}:${minutes.substring(0, 2)} ${ampm}`;
-                              
-                              isSelected = time === formattedTime;
-                            }
-                            
-                            const isAvailable = !!matchingSlot;
-                            return (
+                             return (
                               <button
-                                key={`time-${time}`}
-                                onClick={() => isAvailable && matchingSlot && setSelectedSlot(matchingSlot)}
+                                key={`time-${slot.id}`}
+                                onClick={() => setSelectedSlot(slot)}
                                 className={`px-4 py-2 rounded-[8px] text-center transition-all min-w-[120px] font-['Inter'] ${
                                   isSelected
                                     ? 'bg-[#000] text-white font-medium'
-                                    : isAvailable 
-                                      ? 'border-2 border-black hover:bg-gray-50 text-black font-medium'
-                                      : 'border-2 border-black text-black opacity-60 cursor-not-allowed'
+                                    : 'border-2 border-black hover:bg-gray-50 text-black font-medium'
                                 }`}
-                                disabled={!isAvailable}
                               >
-                                {time}
+                                {formattedTime}
                               </button>
                             );
-                          }).slice(timeSlotIndex, timeSlotIndex + timeSlotDisplayCount)
+                          })
                         ) : (
                           <div className="text-center text-gray-500 py-2 px-4 w-full">
-                            Select a date to view available slots
+                            No available slots for this date
                           </div>
-                        )}
-                      </div>
-                      
-                      <button 
-                        className="p-2 focus:outline-none" 
-                        onClick={handleNextTimeSlot}
-                        disabled={timeSlotIndex + timeSlotDisplayCount >= allTimeSlots.length}
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
+                        )
+                      ) : (
+                        <div className="text-center text-gray-500 py-2 px-4 w-full">
+                          Select a date to view available slots
+                        </div>
+                      )}
                     </div>
                   </div>
                   {/* Book button - always visible if a date is selected */}

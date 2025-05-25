@@ -109,6 +109,7 @@ export interface RazorpayInstance {
   export interface TimeSlot {
     id: string;
     teacherId: string;
+    classId: string;
     session_date: string;
     start_time: string;
     end_time: string;
@@ -155,4 +156,5 @@ export interface RazorpayInstance {
         open: () => void;
       };
     }
+  }
   }

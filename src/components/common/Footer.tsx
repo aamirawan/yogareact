@@ -54,9 +54,9 @@ const Footer = () => {
       </div>
       
       {/* Main content container */}
-      <div className="mx-auto px-[100px] flex justify-between mt-[70px]">
-        {/* Left section with newsletter */}
-        <div className="w-[438px]">
+      <div className="mx-auto px-4 sm:px-6 md:px-8 lg:px-[60px] xl:px-[100px] flex flex-col lg:flex-row justify-between mt-[70px] gap-10 lg:gap-8">
+        {/* Left section with newsletter - always visible */}
+        <div className="w-full lg:w-[438px]">
           <h3 className="font-bold text-[16px] leading-[23px] text-[#121212]">
             Stay in the Know
           </h3>
@@ -66,19 +66,19 @@ const Footer = () => {
           </p>
           
           {/* Email input and submit button */}
-          <div className="w-full mt-[25px] flex">
+          <div className="w-full mt-[25px] flex border border-[#E9E9E9] rounded-[8px] h-[53px]">
             <input 
               type="email" 
               placeholder="Enter Email" 
-              className="w-[299px] h-[50px] px-4 bg-white border border-[#E9E9E9] rounded-l-[6px] text-[16px] text-[#7D7D7D]"
+              className="w-full max-w-[299px] h-[50px] px-4 bg-white border-0 rounded-l-[6px] text-[16px] text-[#7D7D7D] focus:outline-none"
             />
-            <button className="w-[132px] h-[50px] bg-[#121212] rounded-r-[8px] text-white font-medium text-[14px]">
+            <button className="w-[140px] h-[45px] bg-[#121212] rounded-[8px] text-white font-medium text-[14px] my-1 mr-1 ml-auto">
               Submit
             </button>
           </div>
           
           {/* Social media icons */}
-          <div className="flex items-center gap-[26px] mt-[36px]">
+          <div className="hidden sm:flex items-center gap-[26px] mt-[36px]">
             {/* Facebook */}
             <a href="#" aria-label="Facebook">
               <svg width="9" height="18" viewBox="0 0 9 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -111,9 +111,10 @@ const Footer = () => {
           </div>
         </div>
       
-        {/* Right section with links */}
-        <div className="w-[524px]">
-          <div className="flex justify-between w-full">
+        {/* Right section with links - hidden on small devices */}
+        <div className="hidden sm:block w-full lg:w-[524px]">
+          <div className="flex flex-col sm:flex-row justify-between w-full gap-8 sm:gap-4">
+            {/* First column */}
             <div className="flex flex-col">
               <h3 className="font-bold text-[16px] text-[#121212] mb-6">Elevate</h3>
               <ul className="flex flex-col space-y-4">
@@ -128,7 +129,8 @@ const Footer = () => {
               </ul>
             </div>
             
-            <div className="flex flex-col">
+            {/* Second column */}
+            <div className="flex flex-col mt-8 sm:mt-0">
               <h3 className="font-bold text-[16px] text-[#121212] mb-6">Inspiration</h3>
               <ul className="flex flex-col space-y-4">
                 <li><a href="#" className="text-[14px] text-[#121212]">Book A Free Trial</a></li>
@@ -148,18 +150,21 @@ const Footer = () => {
 
       
       {/* Bottom section with logo and copyright */}
-      <div className="w-full mt-[60px] py-[40px]">
-        <div className="mx-auto px-[100px] flex flex-row items-center justify-between">                  
-          <p className="text-left text-[14px] text-[#121212] max-w-[430px]">
+      <div className="w-full mt-[60px] py-[40px] border-t border-gray-100">
+        <div className="mx-auto px-4 sm:px-6 md:px-8 lg:px-[60px] xl:px-[100px] flex flex-col md:flex-row items-center justify-between gap-8">                  
+          {/* Mission statement - hidden on small devices */}
+          <p className="hidden sm:block text-center md:text-left text-[14px] text-[#121212] max-w-[430px] order-2 md:order-1">
             <strong>Elevate Yoga By India For The World.<br /></strong>
             On A Mission To Make Authentic Yoga, A Part Of Each Household.
           </p>
 
-          <div className="flex items-center justify-center">
-            <img src={logo} alt="Elevate Yoga Logo" className="h-[50px]" />
+          {/* Logo - always visible and centered on small screens */}
+          <div className="flex items-center justify-center order-1 md:order-2 w-full sm:w-auto">
+            <img src={logo} alt="Elevate Yoga Logo" className="h-[40px] sm:h-[50px]" />
           </div>
           
-          <p className="text-right text-[12px] text-[#121212] max-w-[320px]">
+          {/* Copyright - hidden on small devices */}
+          <p className="hidden sm:block text-center md:text-right text-[12px] text-[#121212] max-w-[320px] order-3">
             © 2025 Elevate Yoga By Inspiro Digital. All rights reserved.
           </p>
         </div>

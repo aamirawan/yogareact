@@ -12,12 +12,12 @@ const AuthenticYogaSection = () => {
         {/* Mobile and Tablet Layout (Stack) */}
         <div className="lg:hidden flex flex-col">
           {/* Section Title */}
-          <h2 className="text-[28px] xs:text-[32px] sm:text-[38px] md:text-[42px] font-medium leading-[1.2] text-[#121212] mb-4 sm:mb-6">
+          <h2 className="text-[28px] xs:text-[32px] sm:text-[38px] md:text-[42px] font-medium leading-[1.2] text-[#121212] mb-4 sm:mb-6 text-center">
             Authentic Indian Yoga
           </h2>
           
           {/* Description */}
-          <p className="text-[15px] xs:text-[16px] font-normal leading-[1.5] text-[#121212] mb-8 sm:mb-10 max-w-[480px]">
+          <p className="text-[15px] xs:text-[16px] font-normal leading-[1.5] text-[#121212] mb-8 sm:mb-10 max-w-[480px] mx-auto text-center">
             Choose from 100s of classes daily. Choose your best teachers for your own specific needs.
           </p>
           
@@ -29,9 +29,9 @@ const AuthenticYogaSection = () => {
           </div>
           
           {/* Features Grid */}
-          <div className="grid grid-cols-1 xs:grid-cols-2 gap-x-6 sm:gap-x-10 gap-y-8 sm:gap-y-10">
+          <div className="grid grid-cols-2 gap-x-6 sm:gap-x-10 gap-y-8 sm:gap-y-10">
             {/* Feature 1 - Flexible Timings */}
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center text-center">
               <div className="mb-3 sm:mb-4">
                 <img src={icon2} alt="Flexible Timings icon" className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>
@@ -46,7 +46,7 @@ const AuthenticYogaSection = () => {
             </div>
             
             {/* Feature 2 - Expert Indian Teachers */}
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center text-center">
               <div className="mb-3 sm:mb-4">
                 <img src={icon3} alt="Expert Teachers icon" className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>
@@ -61,7 +61,7 @@ const AuthenticYogaSection = () => {
             </div>
             
             {/* Feature 3 - LifeTime Bond */}
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center text-center">
               <div className="mb-3 sm:mb-4">
                 <img src={icon4} alt="LifeTime Bond icon" className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>
@@ -76,7 +76,7 @@ const AuthenticYogaSection = () => {
             </div>
             
             {/* Feature 4 - Accountability */}
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center text-center">
               <div className="mb-3 sm:mb-4">
                 <img src={icon1} alt="Accountability icon" className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>

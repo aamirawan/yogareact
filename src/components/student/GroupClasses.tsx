@@ -34,12 +34,12 @@ const DateSelector: React.FC<{
   onSelectDate: (day: number) => void;
 }> = ({ dates, selectedDate, onSelectDate }) => {
   return (
-    <div className="flex flex-row items-center space-x-16 overflow-x-auto pb-2">
+    <div className="flex flex-row items-center space-x-2 overflow-x-auto pb-2">
       {dates.map((date) => (
         <button
           key={date.day}
           onClick={() => onSelectDate(date.day)}
-          className={`px-4 py-2 text-sm font-bold rounded border border-[#6D6D6E] min-w-[70px] ${
+          className={`px-4 py-2 text-sm font-bold rounded border border-[#6D6D6E] min-w-[100px] ${
             selectedDate === date.day
               ? 'bg-[#121212] text-white'
               : 'bg-white text-[#676B5F]'
@@ -101,49 +101,106 @@ const ClassCard: React.FC<{
   };
   
   return (
-    <div className="w-full border border-[#CFCFCF] rounded-lg p-5 mb-5 relative">
-      {/* Time and duration on the same line at the top */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="font-bold text-lg text-[#121212]">
-          {classItem.time}
-        </div>
-        <div className="flex items-center">
-          <Clock className="w-4 h-4 mr-1 text-[#121212]" />
-          <span className="font-semibold text-sm text-[#121212]">{classItem.duration} mins</span>
-        </div>
-      </div>
-
-      <div className="flex flex-col md:flex-row">
-        {/* Left column with instructor avatar */}
-        <div className="flex-shrink-0 w-[81px] h-[81px] rounded-full overflow-hidden mr-6">
-          <img
-            src={classItem.instructor.avatar}
-            alt={classItem.instructor.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        {/* Middle column with class details */}
-        <div className="flex-grow">
-          <h3 className="text-base font-semibold text-[#121212] mb-2">
-            {classItem.title}
-          </h3>
-          <p className="text-[#545454] mb-2">{classItem.instructor.name}</p>
-          
-          {/* Category tag */}
-          <div className="inline-flex items-center border border-[#676B5F] rounded-lg px-2 py-1 text-xs text-[#676B5F]">
-              <span className="mr-1">
-              <img src={categoryIcon} alt="Category" className="w-4 h-4" />
-            </span>
-            {classItem.category}
+    <>
+    <div className="w-full border border-[#CFCFCF] rounded-[10px] p-5 mb-5 relative hidden md:block">
+      {/* Desktop View - unchanged */}
+      <div className="hidden md:block">
+        {/* Time and duration on the same line at the top */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="font-bold text-lg text-[#121212]">
+            {classItem.time}
+          </div>
+          <div className="flex items-center">
+            <Clock className="w-4 h-4 mr-1 text-[#121212]" />
+            <span className="font-semibold text-sm text-[#121212]">{classItem.duration} mins</span>
           </div>
         </div>
 
-        {/* Right column with CTA */}
-        <div className="flex flex-col items-end justify-end ml-4 min-w-[120px]">
-          
-          {/* Button and signup count */}
-          <div className="mt-auto">
+        <div className="flex flex-row">
+          {/* Left column with instructor avatar */}
+          <div className="flex-shrink-0 w-[81px] h-[81px] rounded-full overflow-hidden mr-6">
+            <img
+              src={classItem.instructor.avatar}
+              alt={classItem.instructor.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Middle column with class details */}
+          <div className="flex-grow">
+            <h3 className="text-base font-semibold text-[#121212] mb-2">
+              {classItem.title}
+            </h3>
+            <p className="text-[#545454] mb-2">{classItem.instructor.name}</p>
+            
+            {/* Category tag */}
+            <div className="inline-flex items-center border border-[#676B5F] rounded-lg px-2 py-1 text-xs text-[#676B5F]">
+              <span className="mr-1">
+                <img src={categoryIcon} alt="Category" className="w-4 h-4" />
+              </span>
+              {classItem.category}
+            </div>
+          </div>
+
+          {/* Right column with CTA */}
+          <div className="flex flex-col items-end justify-end ml-4 min-w-[120px]">
+            {/* Button and signup count */}
+            <div className="mt-auto">
+              <button
+                onClick={handleButtonClick}
+                className={`px-5 py-2 rounded-lg text-white text-sm font-medium ${
+                  classItem.isJoined ? 'bg-[#E32552]' : 'bg-[#121212]'
+                }`}
+              >
+                {classItem.isJoined ? "You're in!" : 'Count me in'}
+              </button>
+              <p className="text-xs text-center mt-2 text-[#676B5F]">{classItem.signedUp} Signed up</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {/* Mobile View - based on Figma design */}
+    <div className="w-full border border-[#CFCFCF] rounded-[10px] p-5 mb-5 relative md:hidden">
+      <div className="md:hidden">
+        {/* Time and duration on the same line at the top */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="font-bold text-lg text-[#121212]">
+            {classItem.time}
+          </div>
+          <div className="flex items-center">
+            <Clock className="w-4 h-4 mr-1 text-[#121212]" />
+            <span className="font-semibold text-sm text-[#121212]">{classItem.duration} mins</span>
+          </div>
+        </div>
+
+        <div className="relative pt-4">
+          {/* Instructor avatar - positioned to match Figma design */}
+          <div className="absolute top-4 w-[77px] h-[77px] rounded overflow-hidden">
+            <img
+              src={classItem.instructor.avatar}
+              alt={classItem.instructor.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Class details - positioned to match Figma design */}
+          <div className="pl-[100px] pr-2 mb-4">
+            <h3 className="text-base font-semibold text-[#121212] mb-1">
+              {classItem.title}
+            </h3>
+            <p className="text-[#545454] mb-2">{classItem.instructor.name}</p>
+          </div>
+
+          {/* Category tag and CTA button */}
+          <div className="flex justify-between items-center mt-2">
+            <div className="inline-flex items-center border border-[#676B5F] rounded-lg px-2 py-1 text-xs text-[#676B5F]">
+              <span className="mr-1">
+                <img src={categoryIcon} alt="Category" className="w-4 h-4" />
+              </span>
+              {classItem.category}
+            </div>
+            
             <button
               onClick={handleButtonClick}
               className={`px-5 py-2 rounded-lg text-white text-sm font-medium ${
@@ -152,11 +209,16 @@ const ClassCard: React.FC<{
             >
               {classItem.isJoined ? "You're in!" : 'Count me in'}
             </button>
-            <p className="text-xs text-center mt-2 text-[#676B5F]">{classItem.signedUp} Signed up</p>
+          </div>
+          
+          {/* Signup count */}
+          <div className="text-right mt-1 mr-1">
+            <p className="text-xs text-[#676B5F]">{classItem.signedUp} Signed up</p>
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 };
 
@@ -581,7 +643,7 @@ const GroupClasses: React.FC = () => {
         </h1>
       </div>
 
-      <div className="container mx-auto px-4 py-8" style={{marginTop: '30px'}}>
+      <div className="max-w-[1224px] mx-auto px-4" style={{marginTop: '30px'}}>
         {/* Live Classes section with theme toggle */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-medium text-[#121212]">Live Classes</h2>

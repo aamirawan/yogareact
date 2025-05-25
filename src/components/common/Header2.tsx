@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logoImage from '../../assets/images/logo.webp';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, User, Settings, Menu, X } from 'lucide-react';
+import { LogOut, User, Settings, X } from 'lucide-react';
 import PromoBanner from './PromoBanner';
 
 interface NavItemProps {
@@ -46,7 +46,7 @@ const NavMenu: React.FC<{ items: NavItemProps[]; showBookTrial: boolean; isMobil
       className="absolute top-[20px] hidden lg:block" 
       style={{ 
         top: '27px', 
-        right: showBookTrial ? '265px' : '195px' 
+        right: showBookTrial ? '20%' : '5%' 
       }}>
       <div className="relative flex items-center space-x-5">
         {items.map((item, index) => (
@@ -133,9 +133,14 @@ const Header2 = () => {
     };
   }, [mobileMenuOpen]);
   
-  // Handle scroll to show/hide promo banner
+  // Handle scroll to show/hide promo banner - only on homepage
   useEffect(() => {
     const controlBanner = () => {
+      // Only apply scroll behavior on homepage
+      if (window.location.pathname !== '/') {
+        return;
+      }
+      
       // Get current scroll position
       const currentScrollY = window.scrollY;
       
@@ -206,25 +211,26 @@ const Header2 = () => {
       </div>
       
       {/* Header - Always visible when scrolling up, hidden when scrolling down */}
-      <header className="w-full h-[81.36px] bg-white border border-[#EDEDED] shadow-sm fixed top-0 left-0 right-0 transition-all duration-300 ease-in-out ${showPromoBanner ? 'opacity-0 pointer-events-none' : 'opacity-100 z-30'}">
+      <header className={`w-full h-[81.36px] bg-white border border-[#EDEDED] shadow-sm fixed top-0 left-0 right-0 transition-all duration-300 ease-in-out ${showPromoBanner ? 'opacity-0 pointer-events-none' : 'opacity-100 z-30'}`}>
         <div className="w-full max-w-[1224px] h-full mx-auto relative">
           {/* Mobile Header Layout */}
           {isMobile ? (
-            <div className="w-full flex items-center justify-between">
-              {/* Left: Hamburger Menu */}
-              <button 
-                className="w-[41px] h-[41px] flex items-center justify-center"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? (
-                  <X size={20} className="text-[#121212]" />
-                ) : (
-                  <Menu size={20} className="text-[#121212]" />
-                )}
-              </button>
-              
-              {/* Center: Logo */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <>
+            <div className="flex items-center justify-between h-full sm:px-6 lg:px-8">
+              <div className="flex items-center space-x-4">
+                {/* Left: Hamburger Menu */}
+                <button 
+                  className="w-[41px] h-[41px] flex items-center justify-center"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
+                  {mobileMenuOpen ? (
+                    <X size={20} className="text-[#121212]" />
+                  ) : (
+                    <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0.875 0.166748H24.125V2.75008H0.875V0.166748ZM0.875 9.20842H16.375V11.7917H0.875V9.20842ZM0.875 18.2501H24.125V20.8334H0.875V18.2501Z" fill="#121212"/>
+                    </svg>
+                  )}
+                </button>
                 <Link to="/">
                   <img 
                     src={logoImage}
@@ -234,7 +240,10 @@ const Header2 = () => {
                   />
                 </Link>
               </div>
-            </div>
+              </div>
+              {/* Center: Logo */}
+              
+            </>
           ) : (
             /* Desktop Logo */
             <div className="absolute top-1/2 -translate-y-1/2">
