@@ -1,17 +1,81 @@
 // Yoga Retreat Experience Section component
+import { useState, useRef } from "react";
+import fullStar from "../../assets/images/Star_icon.svg";
+import halfStar from "../../assets/images/Half-star.svg";
+import TrustpilotLogo from "../../assets/images/Trustpilotlogo.svg";
 
 const YogaRetreatExperienceSection = () => {
-  // Reviews are now hardcoded in the markup for this implementation
+  // State to track active review index
+  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+  const totalReviews = 3; // Total number of reviews
+  
+  // Reference to the carousel container
+  const carouselRef = useRef<HTMLDivElement>(null);
+  
+  // Touch handling for mobile swipe
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+  
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) {
+      nextReview();
+    } else if (isRightSwipe) {
+      prevReview();
+    }
+    
+    // Reset values
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
 
-  // Navigation functions for mobile carousel (not used in desktop view)
+  // Navigation functions for carousel
   const nextReview = () => {
-    // Navigation functionality handled by CSS in this implementation
-    console.log('Next review');
+    if (activeReviewIndex < totalReviews - 1) {
+      setActiveReviewIndex(activeReviewIndex + 1);
+      scrollToReview(activeReviewIndex + 1);
+    } else {
+      // Loop back to the first review
+      setActiveReviewIndex(0);
+      scrollToReview(0);
+    }
   };
 
   const prevReview = () => {
-    // Navigation functionality handled by CSS in this implementation
-    console.log('Previous review');
+    if (activeReviewIndex > 0) {
+      setActiveReviewIndex(activeReviewIndex - 1);
+      scrollToReview(activeReviewIndex - 1);
+    } else {
+      // Loop to the last review
+      setActiveReviewIndex(totalReviews - 1);
+      scrollToReview(totalReviews - 1);
+    }
+  };
+
+  // Function to scroll to a specific review
+  const scrollToReview = (index: number) => {
+    if (carouselRef.current) {
+      const reviewCards = carouselRef.current.querySelectorAll('.review-card');
+      if (reviewCards[index]) {
+        reviewCards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
   };
 
   return (
@@ -53,31 +117,21 @@ const YogaRetreatExperienceSection = () => {
                 {/* Trustpilot stars */}
                 <div className="flex mb-3">
                   {/* Full stars */}
-                  <div className="mr-[2px]">
-                    <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                    </svg>
+                  <div className="mr-[2px]" style={{ width: '25px', height: '23.5px' }}>
+                    <img className="w-full" src={fullStar} alt="Full Star" />  
                   </div>
-                  <div className="mr-[2px]">
-                    <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                    </svg>
+                  <div className="mr-[2px]" style={{ width: '25px', height: '23.5px' }}>
+                    <img className="w-full" src={fullStar} alt="Full Star" />
                   </div>
-                  <div className="mr-[2px]">
-                    <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                    </svg>
+                  <div className="mr-[2px]" style={{ width: '25px', height: '23.5px' }}>
+                    <img className="w-full" src={fullStar} alt="Full Star" />
                   </div>
-                  <div className="mr-[2px]">
-                    <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                    </svg>
+                  <div className="mr-[2px]" style={{ width: '25px', height: '23.5px' }}>
+                    <img className="w-full" src={fullStar} alt="Full Star" />
                   </div>
-                  {/* Half star */}
-                  <div>
-                    <svg width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.3192 18.6266L18.914 17.1346L21.152 24.2214L13.3192 18.6266ZM25.6278 9.67488H15.9301L12.9462 0.723145L10.3353 9.67488H0.637573L8.47034 15.2697L5.48643 24.2214L13.3192 18.6266L18.168 15.2697L25.6278 9.67488Z" fill="#00B67A"/>
-                    </svg>
+                  {/* Half star */} 
+                  <div style={{ width: '25px', height: '23.5px' }}>
+                    <img src={halfStar} alt="Half Star" />
                   </div>
                 </div>
                 
@@ -87,57 +141,41 @@ const YogaRetreatExperienceSection = () => {
                 {/* Trustpilot logo */}
                 <div className="flex items-center">
                   <div className="flex">
-                    <svg width="112" height="28" viewBox="0 0 112 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="22" height="28" fill="#00B67A"/>
-                      <rect x="24" width="22" height="28" fill="#00B67A"/>
-                      <rect x="48" width="22" height="28" fill="#00B67A"/>
-                      <rect x="72" width="22" height="28" fill="#00B67A"/>
-                      <rect x="96" width="22" height="28" fill="#DCDCE6"/>
-                    </svg>
-                  </div>
-                  <div className="ml-2 transform rotate-180">
-                    <svg width="112" height="28" viewBox="0 0 112 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M18 7L23.5 14L18 21L12.5 14L18 7Z" fill="#000000"/>
-                      <path d="M8 14L12 7L16 14L12 21L8 14Z" fill="#00B67A"/>
-                      <path d="M14 18L16 14L18 18L16 22L14 18Z" fill="#005128"/>
-                    </svg>
+                    <img src={TrustpilotLogo} alt="Trustpilot Logo" />
                   </div>
                 </div>
               </div>
               
               {/* Reviews carousel */}
-              <div className="flex flex-col md:flex-row gap-8 md:gap-[60px] w-full md:w-auto overflow-x-auto pb-4 md:ml-auto">
+              <div 
+                ref={carouselRef}
+                className="flex flex-row gap-4 md:gap-[60px] w-full md:w-auto overflow-x-auto pb-4 md:ml-auto snap-x snap-mandatory scrollbar-hide scroll-smooth"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
                 {/* Review 1 */}
-                <div className="min-w-[190px] bg-white p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+                <div className="review-card min-w-[85%] sm:min-w-[250px] md:min-w-[190px] flex-shrink-0 bg-white p-4 rounded-lg transition-all duration-300 hover:shadow-md snap-center">
                   {/* Trustpilot stars and verified badge */}
                   <div className="flex items-center mb-3">
                     <div className="flex">
                       {/* Full stars */}
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
                       {/* Half star */}
-                      <div className="transform scale-75">
-                        <svg width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.3192 18.6266L18.914 17.1346L21.152 24.2214L13.3192 18.6266ZM25.6278 9.67488H15.9301L12.9462 0.723145L10.3353 9.67488H0.637573L8.47034 15.2697L5.48643 24.2214L13.3192 18.6266L18.168 15.2697L25.6278 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={halfStar} alt="Half Star" />
                       </div>
                     </div>
                     
@@ -159,36 +197,26 @@ const YogaRetreatExperienceSection = () => {
                 </div>
                 
                 {/* Review 2 */}
-                <div className="min-w-[190px] bg-white p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+                <div className="review-card min-w-[85%] sm:min-w-[250px] md:min-w-[190px] flex-shrink-0 bg-white p-4 rounded-lg transition-all duration-300 hover:shadow-md snap-center">
                   {/* Trustpilot stars and verified badge */}
                   <div className="flex items-center mb-3">
                     <div className="flex">
                       {/* Full stars */}
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
                       {/* Half star */}
-                      <div className="transform scale-75">
-                        <svg width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.3192 18.6266L18.914 17.1346L21.152 24.2214L13.3192 18.6266ZM25.6278 9.67488H15.9301L12.9462 0.723145L10.3353 9.67488H0.637573L8.47034 15.2697L5.48643 24.2214L13.3192 18.6266L18.168 15.2697L25.6278 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>  
+                        <img src={halfStar} alt="Half Star" />
                       </div>
                     </div>
                     
@@ -210,36 +238,26 @@ const YogaRetreatExperienceSection = () => {
                 </div>
                 
                 {/* Review 3 */}
-                <div className="min-w-[190px] bg-white p-4 rounded-lg transition-all duration-300 hover:shadow-md">
+                <div className="review-card min-w-[85%] sm:min-w-[250px] md:min-w-[190px] flex-shrink-0 bg-white p-4 rounded-lg transition-all duration-300 hover:shadow-md snap-center">
                   {/* Trustpilot stars and verified badge */}
                   <div className="flex items-center mb-3">
                     <div className="flex">
                       {/* Full stars */}
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
-                      <div className="mr-[2px] transform scale-75">
-                        <svg width="27" height="25" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5278 18.6266L19.1227 17.1346L21.3606 24.2214L13.5278 18.6266ZM26.2094 9.67488H16.5117L13.5278 0.723145L10.5439 9.67488H0.846191L8.67895 15.2697L5.69504 24.2214L13.5278 18.6266L18.3767 15.2697L26.2094 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={fullStar} alt="Full Star" />
                       </div>
                       {/* Half star */}
-                      <div className="transform scale-75">
-                        <svg width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.3192 18.6266L18.914 17.1346L21.152 24.2214L13.3192 18.6266ZM25.6278 9.67488H15.9301L12.9462 0.723145L10.3353 9.67488H0.637573L8.47034 15.2697L5.48643 24.2214L13.3192 18.6266L18.168 15.2697L25.6278 9.67488Z" fill="#00B67A"/>
-                        </svg>
+                      <div className="mr-[2px]" style={{ width: '13.9px', height: '13.07px' }}>
+                        <img src={halfStar} alt="Half Star" />
                       </div>
                     </div>
                     
@@ -269,15 +287,31 @@ const YogaRetreatExperienceSection = () => {
         <div className="flex justify-center mt-4">
           <button 
             onClick={prevReview}
-            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center mr-2"
+            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center mr-2 focus:outline-none"
+            aria-label="Previous review"
           >
             <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7 1L1 6L7 11" stroke="#121212" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
+          {/* Carousel indicators */}
+          <div className="hidden sm:flex items-center mx-2">
+            {[...Array(totalReviews)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setActiveReviewIndex(index);
+                  scrollToReview(index);
+                }}
+                className={`w-2 h-2 mx-1 rounded-full focus:outline-none ${index === activeReviewIndex ? 'bg-[#121212]' : 'bg-gray-300'}`}
+                aria-label={`Go to review ${index + 1}`}
+              />
+            ))}
+          </div>
           <button 
             onClick={nextReview}
-            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center"
+            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center focus:outline-none"
+            aria-label="Next review"
           >
             <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1 1L7 6L1 11" stroke="#121212" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
