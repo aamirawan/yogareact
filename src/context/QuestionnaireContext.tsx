@@ -43,7 +43,7 @@ export const QuestionnaireProvider: React.FC<{ children: React.ReactNode }> = ({
     
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/preferences/questionnaire/status`,
+        `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/preferences/questionnaire/status`,
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -69,7 +69,7 @@ const QuestionnairePage: React.FC = () => {
     try {
       // Send data to backend
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/preferences/questionnaire`, 
+        `${import.meta.env.VITE_BACKEND_API_URL.replace(/\/api$/, '')}/api/preferences/questionnaire`, 
         {
           method: 'POST',
           headers: {
